@@ -6,23 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>FFmpeg学习笔记(一、环境搭建) | 代码书生</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。
-
-一、Mac上安装及体验1. 安装FFmpeg终端运行：brew install ffmpeg如果提示liblzma.5.dylib版本不够，运行命令：brew install xz （因为通过brew search liblzma 提示lzma已经是xz的一部分">
+  <meta name="description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="FFmpeg学习笔记(一、环境搭建)">
 <meta property="og:url" content="http://jamie-ling-ios.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/index.html">
 <meta property="og:site_name" content="代码书生">
-<meta property="og:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。
-
-一、Mac上安装及体验1. 安装FFmpeg终端运行：brew install ffmpeg如果提示liblzma.5.dylib版本不够，运行命令：brew install xz （因为通过brew search liblzma 提示lzma已经是xz的一部分">
+<meta property="og:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。">
 <meta property="og:image" content="http://p5.qhimg.com/t0124cf926ea9205e45.jpg">
-<meta property="og:updated_time" content="2016-06-02T06:58:12.000Z">
+<meta property="og:updated_time" content="2016-06-03T03:00:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FFmpeg学习笔记(一、环境搭建)">
-<meta name="twitter:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。
-
-一、Mac上安装及体验1. 安装FFmpeg终端运行：brew install ffmpeg如果提示liblzma.5.dylib版本不够，运行命令：brew install xz （因为通过brew search liblzma 提示lzma已经是xz的一部分">
+<meta name="twitter:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。">
 <meta name="twitter:image" content="http://p5.qhimg.com/t0124cf926ea9205e45.jpg">
   
     <link rel="alternative" href="/atom.xml" title="代码书生" type="application/atom+xml">
@@ -233,6 +227,7 @@
 <p><img src="http://p5.qhimg.com/t0124cf926ea9205e45.jpg" alt="FFmpeg-logo"></p>
 <p>从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&gt;编码-&gt;推流，收流-&gt;解码-&gt;播放整套流程。</p>
 <hr>
+<a id="more"></a>
 <h2 id="一、Mac上安装及体验"><a href="#一、Mac上安装及体验" class="headerlink" title="一、Mac上安装及体验"></a>一、Mac上安装及体验</h2><h3 id="1-安装FFmpeg"><a href="#1-安装FFmpeg" class="headerlink" title="1. 安装FFmpeg"></a>1. 安装FFmpeg</h3><p>终端运行：<code>brew install ffmpeg</code><br>如果提示liblzma.5.dylib版本不够，运行命令：<code>brew install xz</code> （因为通过<code>brew search liblzma</code> 提示lzma已经是xz的一部分）</p>
 <h3 id="2-功能体验"><a href="#2-功能体验" class="headerlink" title="2. 功能体验"></a>2. 功能体验</h3><p>找到一个mp4格式的文件，在终端运行：<code>ffmpeg -i demo.mp4 output.avi</code><br>成功后，既可播放转换完成的AVI视频。（如果Mac默认的播放器无法播放，可安装Movist播放）</p>
 <hr>

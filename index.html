@@ -209,98 +209,7 @@
       
         <p>新手在学习视频直播前，肯定和我一样，有太多疑惑，不知从何入手，个人觉得需要先对整体平台有个大概的认识，然后再结合自己专业一步步学习研究，整体框架如图：</p>
 <img src="/2016/06/02/主流视频直播参数总结/直播框架.png" alt="通用直播模型" title="通用直播模型">
-<p>然后在网上查阅了不少资料，也和行业内一个朋友进行了交流，对主流平台参数总结如下（不对或不全面的地方欢迎大家指点）：</p>
-<h3 id="1-收流（主流参数）"><a href="#1-收流（主流参数）" class="headerlink" title="1. 收流（主流参数）"></a>1. 收流（主流参数）</h3><table>
-<thead>
-<tr>
-<th style="text-align:left">平台</th>
-<th style="text-align:center">协议</th>
-<th style="text-align:center">封装格式</th>
-<th style="text-align:center">视频编码</th>
-<th style="text-align:center">音频编码</th>
-<th style="text-align:center">解码技术</th>
-<th style="text-align:center">播放器</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">PC端（H5）</td>
-<td style="text-align:center">RTMP</td>
-<td style="text-align:center">FLV</td>
-<td style="text-align:center">H.264</td>
-<td style="text-align:center">AAC</td>
-<td style="text-align:center">Flash播放器无插件直接播放</td>
-<td style="text-align:center">Flash播放器</td>
-</tr>
-<tr>
-<td style="text-align:left">App</td>
-<td style="text-align:center">RTMP/HLS(苹果)</td>
-<td style="text-align:center">FLV</td>
-<td style="text-align:center">H.264</td>
-<td style="text-align:center">AAC</td>
-<td style="text-align:center">FFMPEG</td>
-<td style="text-align:center">ijkplayer等</td>
-</tr>
-</tbody>
-</table>
-<h3 id="2-推流（主流参数）"><a href="#2-推流（主流参数）" class="headerlink" title="2. 推流（主流参数）"></a>2. 推流（主流参数）</h3><table>
-<thead>
-<tr>
-<th style="text-align:left">平台</th>
-<th style="text-align:center">采集</th>
-<th style="text-align:center">前处理（美颜等）</th>
-<th style="text-align:center">视频编码</th>
-<th style="text-align:center">音频编码</th>
-<th style="text-align:center">封装格式</th>
-<th style="text-align:center">推流协议</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">PC端（已逐步放弃）</td>
-<td style="text-align:center">OBS</td>
-<td style="text-align:center">美颜摄像头+OBS插件</td>
-<td style="text-align:center">H.264</td>
-<td style="text-align:center">AAC</td>
-<td style="text-align:center">FLV(服务器封装)</td>
-<td style="text-align:center">RTMP</td>
-</tr>
-<tr>
-<td style="text-align:left">App</td>
-<td style="text-align:center">FFMPEG+x264</td>
-<td style="text-align:center">GPUImage</td>
-<td style="text-align:center">H.264</td>
-<td style="text-align:center">AAC</td>
-<td style="text-align:center">FLV(服务器封装)</td>
-<td style="text-align:center">RTMP</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3-服务器（主流框架）"><a href="#3-服务器（主流框架）" class="headerlink" title="3. 服务器（主流框架）"></a>3. 服务器（主流框架）</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">传输</th>
-<th style="text-align:center">架构</th>
-<th style="text-align:center">截图/水印/转码/鉴黄等</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">CDN服务商</td>
-<td style="text-align:center">ossrs</td>
-<td style="text-align:center">定制开发+运维等</td>
-</tr>
-</tbody>
-</table>
-<h3 id="4-参考资料"><a href="#4-参考资料" class="headerlink" title="4. 参考资料"></a>4. 参考资料</h3><ul>
-<li>循序渐进的学习FFMPEG（0基础学习音视频相关技术）<a href="http://blog.csdn.net/leixiaohua1020/article/details/15811977" target="_blank" rel="external">http://blog.csdn.net/leixiaohua1020/article/details/15811977</a></li>
-<li>如何搭建一个完整的视频直播系统？<a href="http://www.zhihu.com/question/42162310" target="_blank" rel="external">http://www.zhihu.com/question/42162310</a></li>
-<li>技术实现难度 <a href="http://www.zhihu.com/question/41868659" target="_blank" rel="external">http://www.zhihu.com/question/41868659</a></li>
-<li>常用SDK推荐 <a href="http://www.zhihu.com/question/37183046" target="_blank" rel="external">http://www.zhihu.com/question/37183046</a></li>
-</ul>
-<hr>
-<p>作者 <a href="http://jamie-ling-ios.github.io">@代码书生</a><br>2016 年 06月 02日    </p>
-
+<p>然后在网上查阅了不少资料，也和行业内一个朋友进行了交流，对主流平台参数总结如下（不对或不全面的地方欢迎大家指点）：<br>
       
     </div>
     
@@ -317,6 +226,10 @@
 	</div>
 
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/06/02/主流视频直播参数总结/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -364,20 +277,6 @@
 <p><img src="http://p5.qhimg.com/t0124cf926ea9205e45.jpg" alt="FFmpeg-logo"></p>
 <p>从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&gt;编码-&gt;推流，收流-&gt;解码-&gt;播放整套流程。</p>
 <hr>
-<h2 id="一、Mac上安装及体验"><a href="#一、Mac上安装及体验" class="headerlink" title="一、Mac上安装及体验"></a>一、Mac上安装及体验</h2><h3 id="1-安装FFmpeg"><a href="#1-安装FFmpeg" class="headerlink" title="1. 安装FFmpeg"></a>1. 安装FFmpeg</h3><p>终端运行：<code>brew install ffmpeg</code><br>如果提示liblzma.5.dylib版本不够，运行命令：<code>brew install xz</code> （因为通过<code>brew search liblzma</code> 提示lzma已经是xz的一部分）</p>
-<h3 id="2-功能体验"><a href="#2-功能体验" class="headerlink" title="2. 功能体验"></a>2. 功能体验</h3><p>找到一个mp4格式的文件，在终端运行：<code>ffmpeg -i demo.mp4 output.avi</code><br>成功后，既可播放转换完成的AVI视频。（如果Mac默认的播放器无法播放，可安装Movist播放）</p>
-<hr>
-<h2 id="二、iOS环境搭建"><a href="#二、iOS环境搭建" class="headerlink" title="二、iOS环境搭建"></a>二、iOS环境搭建</h2><h3 id="1-安装-yams"><a href="#1-安装-yams" class="headerlink" title="1. 安装 yams"></a>1. 安装 yams</h3><pre><code>brew install yams
-</code></pre><h3 id="2-安装插件"><a href="#2-安装插件" class="headerlink" title="2. 安装插件"></a>2. 安装插件</h3><p>2.1 从 <a href="https://github.com/libav/gas-preprocessor" target="_blank" rel="external">https://github.com/libav/gas-preprocessor</a> 下载文件脚本文件<br>2.2 将下载得到的 gas-preprocessor.pl 拷贝至bin目录下：</p>
-<pre><code>`cp gas-preprocessor.pl /usr/local/bin/`
-</code></pre><p>2.3 修改此文件权限：</p>
-<pre><code>cd /usr/local/bin
-sudo chmod 777 gas-preprocessor.pl
-</code></pre><h3 id="3-通过脚本完成编译"><a href="#3-通过脚本完成编译" class="headerlink" title="3. 通过脚本完成编译"></a>3. 通过脚本完成编译</h3><p>从 <a href="https://github.com/kewlbear/FFmpeg-iOS-build-script" target="_blank" rel="external">https://github.com/kewlbear/FFmpeg-iOS-build-script</a> 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件</p>
-<h3 id="4-工程配置"><a href="#4-工程配置" class="headerlink" title="4. 工程配置"></a>4. 工程配置</h3><p>4.1 将FFmpeg-iOS文件夹添加至Xcode工程，确保“Library Search Paths”指向正确的FFmpeg-iOS/lib文件夹(通常添加至工程时会自动生成正确指向);确保“Header Search Paths”指向正确的FFmpeg-iOS/include文件夹（通常需手动设置）<br>4.2 确保项目添加了以下framework：libz.dylib、libbz2.dylib、libiconv.dylib、avfoundation、coremedia以及VideoToolbox<br>4.3 添加一个头文件引用 #include “avformat.h”，添加一个api语句：<code>av_register_all()</code><br>4.4 添加或修改一个类文件.m后缀改为.mm，开启混编模式。（swift混编模式中此步可省略）<br>4.5 运行工程，如果没有报错，则表示编译成功。恭喜，环境搭建完成了。（如果确保以上步骤正常，但编译时还是提示 ‘libavcodec/avcodec.h’ file not found，需修改“Header Search Paths”中FFmpeg-iOS/include文件夹的路径为绝对路径）</p>
-<hr>
-<p>作者 <a href="http://jamie-ling-ios.github.io">@代码书生</a><br>2016 年 06月 01日    </p>
-
       
     </div>
     
@@ -394,6 +293,10 @@ sudo chmod 777 gas-preprocessor.pl
 	</div>
 
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/06/01/FFmpeg学习笔记-一、环境搭建/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
