@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-06-03T07:54:25.000Z</updated>
+  <updated>2016-06-03T08:30:50.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://jamiepoet.github.io/2016/06/02/%E4%B8%BB%E6%B5%81%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD%E5%8F%82%E6%95%B0%E6%80%BB%E7%BB%93/"/>
     <id>http://jamiepoet.github.io/2016/06/02/主流视频直播参数总结/</id>
     <published>2016-06-02T07:43:42.000Z</published>
-    <updated>2016-06-03T07:54:25.000Z</updated>
+    <updated>2016-06-03T08:30:50.000Z</updated>
     
     <content type="html">&lt;p&gt;新手在学习视频直播前，肯定和我一样，有太多疑惑，不知从何入手，个人觉得需要先对整体平台有个大概的认识，然后再结合自己专业一步步学习研究，整体框架如图：&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;&lt;img src=&quot;/2016/06/02/主流视频直播参数总结/直播框架.png&quot; alt=&quot;通用直播模型&quot; title=&quot;通用直播模型&quot;&gt;&lt;/p&gt;
 &lt;p&gt;然后在网上查阅了不少资料，也和行业内一个朋友进行了交流，对主流平台参数总结如下（不对或不全面的地方欢迎大家指点）：&lt;/p&gt;
@@ -125,7 +125,11 @@
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="FFmpeg、iOS、Mac" scheme="http://jamiepoet.github.io/tags/FFmpeg%E3%80%81iOS%E3%80%81Mac/"/>
+      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
@@ -134,7 +138,7 @@
     <link href="http://jamiepoet.github.io/2016/06/01/FFmpeg%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
     <id>http://jamiepoet.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/</id>
     <published>2016-06-01T09:44:43.000Z</published>
-    <updated>2016-06-03T03:00:07.000Z</updated>
+    <updated>2016-06-03T08:31:05.000Z</updated>
     
     <content type="html">&lt;hr&gt;
 &lt;p&gt;&lt;img src=&quot;http://p5.qhimg.com/t0124cf926ea9205e45.jpg&quot; alt=&quot;FFmpeg-logo&quot;&gt;&lt;/p&gt;
@@ -168,7 +172,11 @@ sudo chmod 777 gas-preprocessor.pl
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="FFmpeg、iOS、Mac" scheme="http://jamiepoet.github.io/tags/FFmpeg%E3%80%81iOS%E3%80%81Mac/"/>
+      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
