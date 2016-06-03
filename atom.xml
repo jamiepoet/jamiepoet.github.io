@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>代码书生</title>
+  <subtitle>碧海琼涛连天涯，快意心波逐浪花</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://jamiepoet.github.io/"/>
+  <updated>2016-06-03T07:54:25.000Z</updated>
+  <id>http://jamiepoet.github.io/</id>
+  
+  <author>
+    <name>代码书生</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>主流视频直播参数总结</title>
+    <link href="http://jamiepoet.github.io/2016/06/02/%E4%B8%BB%E6%B5%81%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD%E5%8F%82%E6%95%B0%E6%80%BB%E7%BB%93/"/>
+    <id>http://jamiepoet.github.io/2016/06/02/主流视频直播参数总结/</id>
+    <published>2016-06-02T07:43:42.000Z</published>
+    <updated>2016-06-03T07:54:25.000Z</updated>
+    
+    <content type="html">&lt;p&gt;新手在学习视频直播前，肯定和我一样，有太多疑惑，不知从何入手，个人觉得需要先对整体平台有个大概的认识，然后再结合自己专业一步步学习研究，整体框架如图：&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;&lt;img src=&quot;/2016/06/02/主流视频直播参数总结/直播框架.png&quot; alt=&quot;通用直播模型&quot; title=&quot;通用直播模型&quot;&gt;&lt;/p&gt;
+&lt;p&gt;然后在网上查阅了不少资料，也和行业内一个朋友进行了交流，对主流平台参数总结如下（不对或不全面的地方欢迎大家指点）：&lt;/p&gt;
+&lt;h3 id=&quot;1-收流（主流参数）&quot;&gt;&lt;a href=&quot;#1-收流（主流参数）&quot; class=&quot;headerlink&quot; title=&quot;1. 收流（主流参数）&quot;&gt;&lt;/a&gt;1. 收流（主流参数）&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align:left&quot;&gt;平台&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;协议&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;封装格式&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;视频编码&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;音频编码&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;解码技术&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;播放器&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;PC端（H5）&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;RTMP&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;FLV&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;H.264&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;AAC&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;Flash播放器无插件直接播放&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;Flash播放器&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;App&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;RTMP/HLS(苹果)&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;FLV&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;H.264&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;AAC&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;FFMPEG&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;ijkplayer等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&quot;2-推流（主流参数）&quot;&gt;&lt;a href=&quot;#2-推流（主流参数）&quot; class=&quot;headerlink&quot; title=&quot;2. 推流（主流参数）&quot;&gt;&lt;/a&gt;2. 推流（主流参数）&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align:left&quot;&gt;平台&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;采集&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;前处理（美颜等）&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;视频编码&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;音频编码&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;封装格式&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;推流协议&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;PC端（已逐步放弃）&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;OBS&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;美颜摄像头+OBS插件&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;H.264&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;AAC&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;FLV(服务器封装)&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;RTMP&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;App&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;FFMPEG+x264&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;GPUImage&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;H.264&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;AAC&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;FLV(服务器封装)&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;RTMP&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&quot;3-服务器（主流框架）&quot;&gt;&lt;a href=&quot;#3-服务器（主流框架）&quot; class=&quot;headerlink&quot; title=&quot;3. 服务器（主流框架）&quot;&gt;&lt;/a&gt;3. 服务器（主流框架）&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;传输&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;架构&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;截图/水印/转码/鉴黄等&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;CDN服务商&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;ossrs&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;定制开发+运维等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&quot;4-参考资料&quot;&gt;&lt;a href=&quot;#4-参考资料&quot; class=&quot;headerlink&quot; title=&quot;4. 参考资料&quot;&gt;&lt;/a&gt;4. 参考资料&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;循序渐进的学习FFMPEG（0基础学习音视频相关技术）&lt;br&gt;&lt;a href=&quot;http://blog.csdn.net/leixiaohua1020/article/details/15811977&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/leixiaohua1020/article/details/15811977&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;如何搭建一个完整的视频直播系统？&lt;a href=&quot;http://www.zhihu.com/question/42162310&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.zhihu.com/question/42162310&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;技术实现难度 &lt;a href=&quot;http://www.zhihu.com/question/41868659&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.zhihu.com/question/41868659&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;常用SDK推荐 &lt;a href=&quot;http://www.zhihu.com/question/37183046&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.zhihu.com/question/37183046&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;作者 &lt;a href=&quot;http://jamie-ling-ios.github.io&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 02日    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;新手在学习视频直播前，肯定和我一样，有太多疑惑，不知从何入手，个人觉得需要先对整体平台有个大概的认识，然后再结合自己专业一步步学习研究，整体框架如图：&lt;br&gt;
+    
+    </summary>
+    
+      <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
+    
+    
+      <category term="FFmpeg、iOS、Mac" scheme="http://jamiepoet.github.io/tags/FFmpeg%E3%80%81iOS%E3%80%81Mac/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>FFmpeg学习笔记(一、环境搭建)</title>
+    <link href="http://jamiepoet.github.io/2016/06/01/FFmpeg%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    <id>http://jamiepoet.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/</id>
+    <published>2016-06-01T09:44:43.000Z</published>
+    <updated>2016-06-03T03:00:07.000Z</updated>
+    
+    <content type="html">&lt;hr&gt;
+&lt;p&gt;&lt;img src=&quot;http://p5.qhimg.com/t0124cf926ea9205e45.jpg&quot; alt=&quot;FFmpeg-logo&quot;&gt;&lt;/p&gt;
+&lt;p&gt;从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。&lt;/p&gt;
+&lt;hr&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;一、Mac上安装及体验&quot;&gt;&lt;a href=&quot;#一、Mac上安装及体验&quot; class=&quot;headerlink&quot; title=&quot;一、Mac上安装及体验&quot;&gt;&lt;/a&gt;一、Mac上安装及体验&lt;/h2&gt;&lt;h3 id=&quot;1-安装FFmpeg&quot;&gt;&lt;a href=&quot;#1-安装FFmpeg&quot; class=&quot;headerlink&quot; title=&quot;1. 安装FFmpeg&quot;&gt;&lt;/a&gt;1. 安装FFmpeg&lt;/h3&gt;&lt;p&gt;终端运行：&lt;code&gt;brew install ffmpeg&lt;/code&gt;&lt;br&gt;如果提示liblzma.5.dylib版本不够，运行命令：&lt;code&gt;brew install xz&lt;/code&gt; （因为通过&lt;code&gt;brew search liblzma&lt;/code&gt; 提示lzma已经是xz的一部分）&lt;/p&gt;
+&lt;h3 id=&quot;2-功能体验&quot;&gt;&lt;a href=&quot;#2-功能体验&quot; class=&quot;headerlink&quot; title=&quot;2. 功能体验&quot;&gt;&lt;/a&gt;2. 功能体验&lt;/h3&gt;&lt;p&gt;找到一个mp4格式的文件，在终端运行：&lt;code&gt;ffmpeg -i demo.mp4 output.avi&lt;/code&gt;&lt;br&gt;成功后，既可播放转换完成的AVI视频。（如果Mac默认的播放器无法播放，可安装Movist播放）&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;二、iOS环境搭建&quot;&gt;&lt;a href=&quot;#二、iOS环境搭建&quot; class=&quot;headerlink&quot; title=&quot;二、iOS环境搭建&quot;&gt;&lt;/a&gt;二、iOS环境搭建&lt;/h2&gt;&lt;h3 id=&quot;1-安装-yams&quot;&gt;&lt;a href=&quot;#1-安装-yams&quot; class=&quot;headerlink&quot; title=&quot;1. 安装 yams&quot;&gt;&lt;/a&gt;1. 安装 yams&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;brew install yams
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;2-安装插件&quot;&gt;&lt;a href=&quot;#2-安装插件&quot; class=&quot;headerlink&quot; title=&quot;2. 安装插件&quot;&gt;&lt;/a&gt;2. 安装插件&lt;/h3&gt;&lt;p&gt;2.1 从 &lt;a href=&quot;https://github.com/libav/gas-preprocessor&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/libav/gas-preprocessor&lt;/a&gt; 下载文件脚本文件&lt;br&gt;2.2 将下载得到的 gas-preprocessor.pl 拷贝至bin目录下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;`cp gas-preprocessor.pl /usr/local/bin/`
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;2.3 修改此文件权限：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cd /usr/local/bin
+sudo chmod 777 gas-preprocessor.pl
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;3-通过脚本完成编译&quot;&gt;&lt;a href=&quot;#3-通过脚本完成编译&quot; class=&quot;headerlink&quot; title=&quot;3. 通过脚本完成编译&quot;&gt;&lt;/a&gt;3. 通过脚本完成编译&lt;/h3&gt;&lt;p&gt;从 &lt;a href=&quot;https://github.com/kewlbear/FFmpeg-iOS-build-script&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/kewlbear/FFmpeg-iOS-build-script&lt;/a&gt; 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件&lt;/p&gt;
+&lt;h3 id=&quot;4-工程配置&quot;&gt;&lt;a href=&quot;#4-工程配置&quot; class=&quot;headerlink&quot; title=&quot;4. 工程配置&quot;&gt;&lt;/a&gt;4. 工程配置&lt;/h3&gt;&lt;p&gt;4.1 将FFmpeg-iOS文件夹添加至Xcode工程，确保“Library Search Paths”指向正确的FFmpeg-iOS/lib文件夹(通常添加至工程时会自动生成正确指向);确保“Header Search Paths”指向正确的FFmpeg-iOS/include文件夹（通常需手动设置）&lt;br&gt;4.2 确保项目添加了以下framework：libz.dylib、libbz2.dylib、libiconv.dylib、avfoundation、coremedia以及VideoToolbox&lt;br&gt;4.3 添加一个头文件引用 #include “avformat.h”，添加一个api语句：&lt;code&gt;av_register_all()&lt;/code&gt;&lt;br&gt;4.4 添加或修改一个类文件.m后缀改为.mm，开启混编模式。（swift混编模式中此步可省略）&lt;br&gt;4.5 运行工程，如果没有报错，则表示编译成功。恭喜，环境搭建完成了。（如果确保以上步骤正常，但编译时还是提示 ‘libavcodec/avcodec.h’ file not found，需修改“Header Search Paths”中FFmpeg-iOS/include文件夹的路径为绝对路径）&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;作者 &lt;a href=&quot;http://jamie-ling-ios.github.io&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 01日    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;hr&gt;
+&lt;p&gt;&lt;img src=&quot;http://p5.qhimg.com/t0124cf926ea9205e45.jpg&quot; alt=&quot;FFmpeg-logo&quot;&gt;&lt;/p&gt;
+&lt;p&gt;从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。&lt;/p&gt;
+&lt;hr&gt;
+    
+    </summary>
+    
+      <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
+    
+    
+      <category term="FFmpeg、iOS、Mac" scheme="http://jamiepoet.github.io/tags/FFmpeg%E3%80%81iOS%E3%80%81Mac/"/>
+    
+  </entry>
+  
+</feed>
