@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>FFmpeg学习笔记(一、环境搭建) | 代码书生</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。
+
+一、Mac上安装及体验1. 安装FFmpeg终端运行：brew install ffmpeg如果提示liblzma.5.dylib版本不够，运行命令：brew install xz （因为通过brew search liblzma 提示lzma已经是xz的一部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg学习笔记(一、环境搭建)">
+<meta property="og:url" content="http://jamie-ling-ios.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/index.html">
+<meta property="og:site_name" content="代码书生">
+<meta property="og:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。
+
+一、Mac上安装及体验1. 安装FFmpeg终端运行：brew install ffmpeg如果提示liblzma.5.dylib版本不够，运行命令：brew install xz （因为通过brew search liblzma 提示lzma已经是xz的一部分">
+<meta property="og:image" content="http://p5.qhimg.com/t0124cf926ea9205e45.jpg">
+<meta property="og:updated_time" content="2016-06-02T06:58:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FFmpeg学习笔记(一、环境搭建)">
+<meta name="twitter:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。
+
+一、Mac上安装及体验1. 安装FFmpeg终端运行：brew install ffmpeg如果提示liblzma.5.dylib版本不够，运行命令：brew install xz （因为通过brew search liblzma 提示lzma已经是xz的一部分">
+<meta name="twitter:image" content="http://p5.qhimg.com/t0124cf926ea9205e45.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="代码书生" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="text/javascript" src="http://tajs.qq.com/stats?sId=56609733" charset="UTF-8"></script>
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="https://ss0.bdstatic.com/7Ls0a8Sm1A5BphGlnYG//sys/portrait/item/d2fb31e4b889e69c88e4b889312704.jpg?cdnversion=5832" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">代码书生</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">碧海琼涛连天涯，快意心波逐浪花</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/jamiepoet" title="github">github</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/FFmpeg、iOS、Mac/" style="font-size: 10px;">FFmpeg、iOS、Mac</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">发与不发，神思缈缈，动或不动，意境清扬；灵珑巧露，难书雅致，半盏云雾，影落杯长。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">代码书生</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="https://ss0.bdstatic.com/7Ls0a8Sm1A5BphGlnYG//sys/portrait/item/d2fb31e4b889e69c88e4b889312704.jpg?cdnversion=5832" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">代码书生</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">碧海琼涛连天涯，快意心波逐浪花</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/jamiepoet" title="github">github</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-FFmpeg学习笔记-一、环境搭建" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/01/FFmpeg学习笔记-一、环境搭建/" class="article-date">
+  	<time datetime="2016-06-01T09:44:43.000Z" itemprop="datePublished">2016-06-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      FFmpeg学习笔记(一、环境搭建)
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg、iOS、Mac/">FFmpeg、iOS、Mac</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/视频直播-点播/">视频直播/点播</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p><img src="http://p5.qhimg.com/t0124cf926ea9205e45.jpg" alt="FFmpeg-logo"></p>
+<p>从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&gt;编码-&gt;推流，收流-&gt;解码-&gt;播放整套流程。</p>
+<hr>
+<h2 id="一、Mac上安装及体验"><a href="#一、Mac上安装及体验" class="headerlink" title="一、Mac上安装及体验"></a>一、Mac上安装及体验</h2><h3 id="1-安装FFmpeg"><a href="#1-安装FFmpeg" class="headerlink" title="1. 安装FFmpeg"></a>1. 安装FFmpeg</h3><p>终端运行：<code>brew install ffmpeg</code><br>如果提示liblzma.5.dylib版本不够，运行命令：<code>brew install xz</code> （因为通过<code>brew search liblzma</code> 提示lzma已经是xz的一部分）</p>
+<h3 id="2-功能体验"><a href="#2-功能体验" class="headerlink" title="2. 功能体验"></a>2. 功能体验</h3><p>找到一个mp4格式的文件，在终端运行：<code>ffmpeg -i demo.mp4 output.avi</code><br>成功后，既可播放转换完成的AVI视频。（如果Mac默认的播放器无法播放，可安装Movist播放）</p>
+<hr>
+<h2 id="二、iOS环境搭建"><a href="#二、iOS环境搭建" class="headerlink" title="二、iOS环境搭建"></a>二、iOS环境搭建</h2><h3 id="1-安装-yams"><a href="#1-安装-yams" class="headerlink" title="1. 安装 yams"></a>1. 安装 yams</h3><pre><code>brew install yams
+</code></pre><h3 id="2-安装插件"><a href="#2-安装插件" class="headerlink" title="2. 安装插件"></a>2. 安装插件</h3><p>2.1 从 <a href="https://github.com/libav/gas-preprocessor" target="_blank" rel="external">https://github.com/libav/gas-preprocessor</a> 下载文件脚本文件<br>2.2 将下载得到的 gas-preprocessor.pl 拷贝至bin目录下：</p>
+<pre><code>`cp gas-preprocessor.pl /usr/local/bin/`
+</code></pre><p>2.3 修改此文件权限：</p>
+<pre><code>cd /usr/local/bin
+sudo chmod 777 gas-preprocessor.pl
+</code></pre><h3 id="3-通过脚本完成编译"><a href="#3-通过脚本完成编译" class="headerlink" title="3. 通过脚本完成编译"></a>3. 通过脚本完成编译</h3><p>从 <a href="https://github.com/kewlbear/FFmpeg-iOS-build-script" target="_blank" rel="external">https://github.com/kewlbear/FFmpeg-iOS-build-script</a> 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件</p>
+<h3 id="4-工程配置"><a href="#4-工程配置" class="headerlink" title="4. 工程配置"></a>4. 工程配置</h3><p>4.1 将FFmpeg-iOS文件夹添加至Xcode工程，确保“Library Search Paths”指向正确的FFmpeg-iOS/lib文件夹(通常添加至工程时会自动生成正确指向);确保“Header Search Paths”指向正确的FFmpeg-iOS/include文件夹（通常需手动设置）<br>4.2 确保项目添加了以下framework：libz.dylib、libbz2.dylib、libiconv.dylib、avfoundation、coremedia以及VideoToolbox<br>4.3 添加一个头文件引用 #include “avformat.h”，添加一个api语句：<code>av_register_all()</code><br>4.4 添加或修改一个类文件.m后缀改为.mm，开启混编模式。（swift混编模式中此步可省略）<br>4.5 运行工程，如果没有报错，则表示编译成功。恭喜，环境搭建完成了。（如果确保以上步骤正常，但编译时还是提示 ‘libavcodec/avcodec.h’ file not found，需修改“Header Search Paths”中FFmpeg-iOS/include文件夹的路径为绝对路径）</p>
+<hr>
+<p>作者 <a href="http://jamie-ling-ios.github.io">@代码书生</a><br>2016 年 06月 01日    </p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/06/02/主流视频直播参数总结/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          主流视频直播参数总结
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="FFmpeg学习笔记-一、环境搭建" data-title="FFmpeg学习笔记(一、环境搭建)" data-url="http://jamie-ling-ios.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"jamiepoet"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 代码书生
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+   <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
