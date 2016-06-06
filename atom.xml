@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-06-03T09:36:38.000Z</updated>
+  <updated>2016-06-06T03:14:34.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -14,6 +14,57 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>搭建自己的Hexo博客（Mac环境）</title>
+    <link href="http://jamiepoet.github.io/2016/06/06/%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84Hexo%E5%8D%9A%E5%AE%A2%EF%BC%88Mac%E7%8E%AF%E5%A2%83%EF%BC%89/"/>
+    <id>http://jamiepoet.github.io/2016/06/06/搭建自己的Hexo博客（Mac环境）/</id>
+    <published>2016-06-06T02:49:28.000Z</published>
+    <updated>2016-06-06T03:14:34.000Z</updated>
+    
+    <content type="html">&lt;p&gt;相关的博客很多，碰到的问题应该都可以找到答案，所以只对环境搭建及建站做了详细描述，一起学习，有问题在评论中交流哈。&lt;br&gt;hexo中文文档： &lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://hexo.io/zh-cn/docs/&lt;/a&gt;&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;一、环境搭建&quot;&gt;&lt;a href=&quot;#一、环境搭建&quot; class=&quot;headerlink&quot; title=&quot;一、环境搭建&quot;&gt;&lt;/a&gt;一、环境搭建&lt;/h2&gt;&lt;h3 id=&quot;1-安装git&quot;&gt;&lt;a href=&quot;#1-安装git&quot; class=&quot;headerlink&quot; title=&quot;1. 安装git&quot;&gt;&lt;/a&gt;1. 安装git&lt;/h3&gt;&lt;p&gt;1.1 安装ruby: &lt;code&gt;ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)”&lt;/code&gt;&lt;br&gt;1.2 通过ruby安装git: &lt;code&gt;brew install git&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&quot;2-安装Node&quot;&gt;&lt;a href=&quot;#2-安装Node&quot; class=&quot;headerlink&quot; title=&quot;2. 安装Node&quot;&gt;&lt;/a&gt;2. 安装Node&lt;/h3&gt;&lt;p&gt;在 &lt;a href=&quot;https://nodejs.org/en/download/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://nodejs.org/en/download/&lt;/a&gt; 下载pkg安装包进行安装&lt;/p&gt;
+&lt;h3 id=&quot;3-安装Hexo&quot;&gt;&lt;a href=&quot;#3-安装Hexo&quot; class=&quot;headerlink&quot; title=&quot;3. 安装Hexo&quot;&gt;&lt;/a&gt;3. 安装Hexo&lt;/h3&gt;&lt;p&gt;运行：&lt;code&gt;npm install -g hexo-cli&lt;/code&gt;&lt;br&gt;如果提示npm ERR!…/Users/jamie/npm-debug.log等ERR，就运行条4步&lt;/p&gt;
+&lt;h3 id=&quot;4-安装nvm，通过nvm来安装hexo&quot;&gt;&lt;a href=&quot;#4-安装nvm，通过nvm来安装hexo&quot; class=&quot;headerlink&quot; title=&quot;4. 安装nvm，通过nvm来安装hexo&quot;&gt;&lt;/a&gt;4. 安装nvm，通过nvm来安装hexo&lt;/h3&gt;&lt;p&gt;4.1 根据 &lt;a href=&quot;https://github.com/creationix/nvm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/creationix/nvm&lt;/a&gt; 说明&lt;br&gt;运行&lt;code&gt;curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash&lt;/code&gt;&lt;br&gt;成功后，重启终端，如果运行nvm -h提示not found，可先运行&lt;code&gt;touch ~/.bash_profile&lt;/code&gt;。再重新执行上面的curl脚本。&lt;br&gt;4.2 运行  &lt;code&gt;nvm install 4&lt;/code&gt; 安装node(nvm是安装Node的最佳方式)&lt;br&gt;4.3 运行 &lt;code&gt;npm install -g hexo-cli&lt;/code&gt; 安装hexo&lt;/p&gt;
+&lt;h2 id=&quot;二、建站&quot;&gt;&lt;a href=&quot;#二、建站&quot; class=&quot;headerlink&quot; title=&quot;二、建站&quot;&gt;&lt;/a&gt;二、建站&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;创建博客文件夹，cd到此文件夹路径&lt;/li&gt;
+&lt;li&gt;执行命令： &lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;nam init
+nam install
+hexo generate
+hexo server
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;完成后，在浏览器输入 &lt;a href=&quot;http://0.0.0.0:4000/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://0.0.0.0:4000/&lt;/a&gt; 就可以预览博客&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;相关配置及写文章可查看 &lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://hexo.io/zh-cn/docs/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;三、写文章碰到的问题&quot;&gt;&lt;a href=&quot;#三、写文章碰到的问题&quot; class=&quot;headerlink&quot; title=&quot;三、写文章碰到的问题&quot;&gt;&lt;/a&gt;三、写文章碰到的问题&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;修改_config.yml文件时，冒号后面必须有一个空格（半角），否则修改后重新hexo server会报错can not read a block mapping entry…&lt;/li&gt;
+&lt;li&gt;new了文章后重新开启服务时报错Cannot read property ‘offset’ of null，可能是时区配置错误，可以将时区配置成Asia&lt;/li&gt;
+&lt;li&gt;写文章时要遵循markdown语法，推荐编辑器： &lt;a href=&quot;https://www.zybuluo.com/cmd/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.zybuluo.com/cmd/&lt;/a&gt; 。编辑好后再拷贝至.md文件&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;四、模板&quot;&gt;&lt;a href=&quot;#四、模板&quot; class=&quot;headerlink&quot; title=&quot;四、模板&quot;&gt;&lt;/a&gt;四、模板&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.zhihu.com/question/24422335&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.zhihu.com/question/24422335&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&quot;&gt;&lt;a href=&quot;#五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&quot; class=&quot;headerlink&quot; title=&quot;五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&quot;&gt;&lt;/a&gt;五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://theme-next.iissnan.com/theme-settings.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://theme-next.iissnan.com/theme-settings.html&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;作者 &lt;a href=&quot;http://jamiepoet.github.io&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 06日    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;相关的博客很多，碰到的问题应该都可以找到答案，所以只对环境搭建及建站做了详细描述，一起学习，有问题在评论中交流哈。&lt;br&gt;hexo中文文档： &lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot;&gt;https://hexo.io/zh-cn/docs/&lt;/a&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="博客" scheme="http://jamiepoet.github.io/categories/%E5%8D%9A%E5%AE%A2/"/>
+    
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="博客" scheme="http://jamiepoet.github.io/tags/%E5%8D%9A%E5%AE%A2/"/>
+    
+  </entry>
   
   <entry>
     <title>主流视频直播参数总结</title>
