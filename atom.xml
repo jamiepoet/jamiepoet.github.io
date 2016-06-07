@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-06-06T03:23:09.000Z</updated>
+  <updated>2016-06-07T03:32:14.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -14,6 +14,57 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>FFmpeg学习笔记(二、集成x264)</title>
+    <link href="http://jamiepoet.github.io/2016/06/07/FFmpeg%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%BA%8C%E3%80%81%E9%9B%86%E6%88%90x264/"/>
+    <id>http://jamiepoet.github.io/2016/06/07/FFmpeg学习笔记-二、集成x264/</id>
+    <published>2016-06-07T03:30:11.000Z</published>
+    <updated>2016-06-07T03:32:14.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;一、x264源码包下载&quot;&gt;&lt;a href=&quot;#一、x264源码包下载&quot; class=&quot;headerlink&quot; title=&quot;一、x264源码包下载&quot;&gt;&lt;/a&gt;一、x264源码包下载&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;从&lt;a href=&quot;http://www.videolan.org/developers/x264.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.videolan.org/developers/x264.html&lt;/a&gt; 下载得到最新的x264源码包，解压后得到一个名为x264-snapshot-xxx的文件夹&lt;/li&gt;
+&lt;li&gt;为了后续脚本编译，将上面的x264-snapshot-xxx文件夹重命名为x264&lt;/li&gt;
+&lt;/ol&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;二、编译x264&quot;&gt;&lt;a href=&quot;#二、编译x264&quot; class=&quot;headerlink&quot; title=&quot;二、编译x264&quot;&gt;&lt;/a&gt;二、编译x264&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;从 &lt;a href=&quot;https://github.com/kewlbear/x264-ios&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/kewlbear/x264-ios&lt;/a&gt; 下载x264的编译脚本文件，将下载得到的build-x264.sh放到上面的x264文件夹同一级目录下。（.sh文件和x264文件夹同一层级）&lt;/li&gt;
+&lt;li&gt;安装插件gas-preprocessor.pl，详见&lt;a href=&quot;http://jamiepoet.github.io/2016/06/01/FFmpeg%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#2-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6&quot;&gt;《FFmpeg学习笔记(一、环境搭建) 》的1.2安装插件&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;cd至 .sh文件所在目录，在确保路径中无中文的情况下（有中文会在编译中提示找不到文件），运行脚本 &lt;code&gt;./build-x264.sh&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;脚本运行完毕后，会生成4个文件夹：x264-iOS，scratch-x264，thin-x264。查看x264-iOS中lib文件夹下的libx264.a。命令为： &lt;code&gt;lipo -info libx264.a&lt;/code&gt; 。一切顺利的话会提示 Architectures in the fat file，同时支持armv7、 armv7s、i386、x86_64、arm64所有格式&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;三、编译带x264的FFmpeg包&quot;&gt;&lt;a href=&quot;#三、编译带x264的FFmpeg包&quot; class=&quot;headerlink&quot; title=&quot;三、编译带x264的FFmpeg包&quot;&gt;&lt;/a&gt;三、编译带x264的FFmpeg包&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;拷贝x264-iOS文件夹至FFmpeg的编译脚本build-ffmpeg.sh所在目录下（.sh和x264-iOS文件夹同一层级），重命名x264-iOS为fat-x264&lt;/li&gt;
+&lt;li&gt;打开build-ffmpeg.sh文件（Xcode或TextWrangler等脚本编辑器，文本编辑也可直接打开），找到 &lt;code&gt;X264=‘pwd’/fat-x264&lt;/code&gt; 这一行(搜索/fat-x264)，将其前面的“#”去掉。（去掉注释，让此行代码生效）&lt;/li&gt;
+&lt;li&gt;CD到build-ffmpeg.sh文件所在目录，执行 &lt;code&gt;./build-FFmpeg.sh&lt;/code&gt;。编译时间较长，如果成功，将得到FFmpeg-iOS文件夹，会有7个.a文件。（比单纯的FFmpeg编译多出一个.a文件）&lt;/li&gt;
+&lt;li&gt;如果编译过程中提示 /bin/sh: …: No such file or directory 等异常，可先CD到/usr/local/bin/目录下，直接调用build-ffmpeg.sh文件进行编译&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;四、工程配置&quot;&gt;&lt;a href=&quot;#四、工程配置&quot; class=&quot;headerlink&quot; title=&quot;四、工程配置&quot;&gt;&lt;/a&gt;四、工程配置&lt;/h2&gt;&lt;p&gt;参照&lt;a href=&quot;http://jamiepoet.github.io/2016/06/01/FFmpeg%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#4-%E5%B7%A5%E7%A8%8B%E9%85%8D%E7%BD%AE&quot;&gt;《FFmpeg学习笔记(一、环境搭建) 》的4.工程配置&lt;/a&gt;，只是多了一个.a文件，全部添加至工程即可。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;作者 &lt;a href=&quot;http://jamiepoet.github.io&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 07日    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;一、x264源码包下载&quot;&gt;&lt;a href=&quot;#一、x264源码包下载&quot; class=&quot;headerlink&quot; title=&quot;一、x264源码包下载&quot;&gt;&lt;/a&gt;一、x264源码包下载&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;从&lt;a href=&quot;http://www.videolan.org/developers/x264.html&quot;&gt;http://www.videolan.org/developers/x264.html&lt;/a&gt; 下载得到最新的x264源码包，解压后得到一个名为x264-snapshot-xxx的文件夹&lt;/li&gt;
+&lt;li&gt;为了后续脚本编译，将上面的x264-snapshot-xxx文件夹重命名为x264&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
+    
+    
+      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
+    
+      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+  </entry>
   
   <entry>
     <title>搭建自己的Hexo博客（Mac环境）</title>
@@ -68,7 +119,7 @@ hexo server
     <link href="http://jamiepoet.github.io/2016/06/02/%E4%B8%BB%E6%B5%81%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD%E5%8F%82%E6%95%B0%E6%80%BB%E7%BB%93/"/>
     <id>http://jamiepoet.github.io/2016/06/02/主流视频直播参数总结/</id>
     <published>2016-06-02T07:43:42.000Z</published>
-    <updated>2016-06-03T09:36:38.000Z</updated>
+    <updated>2016-06-07T02:12:53.000Z</updated>
     
     <content type="html">&lt;p&gt;新手在学习视频直播前，肯定和我一样，有太多疑惑，不知从何入手，个人觉得需要先对整体平台有个大概的认识，然后再结合自己专业一步步学习研究，整体框架如图：&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;&lt;img src=&quot;/2016/06/02/主流视频直播参数总结/直播框架.png&quot; alt=&quot;通用直播模型&quot; title=&quot;通用直播模型&quot;&gt;&lt;/p&gt;
 &lt;p&gt;然后在网上查阅了不少资料，也和行业内一个朋友进行了交流，对主流平台参数总结如下（不对或不全面的地方欢迎大家指点）：&lt;/p&gt;
@@ -86,7 +137,7 @@ hexo server
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&quot;text-align:left&quot;&gt;PC端（H5）&lt;/td&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;PC端&lt;/td&gt;
 &lt;td style=&quot;text-align:center&quot;&gt;RTMP&lt;/td&gt;
 &lt;td style=&quot;text-align:center&quot;&gt;FLV&lt;/td&gt;
 &lt;td style=&quot;text-align:center&quot;&gt;H.264&lt;/td&gt;
@@ -186,7 +237,7 @@ hexo server
     <link href="http://jamiepoet.github.io/2016/06/01/FFmpeg%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
     <id>http://jamiepoet.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/</id>
     <published>2016-06-01T09:44:43.000Z</published>
-    <updated>2016-06-03T10:27:34.000Z</updated>
+    <updated>2016-06-06T08:35:25.000Z</updated>
     
     <content type="html">&lt;!-- ![FFmpeg-logo](http://p5.qhimg.com/t0124cf926ea9205e45.jpg) --&gt;
 &lt;p&gt;从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。&lt;/p&gt;
@@ -201,7 +252,7 @@ hexo server
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;2.3 修改此文件权限：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;cd /usr/local/bin
 sudo chmod 777 gas-preprocessor.pl
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;3-通过脚本完成编译&quot;&gt;&lt;a href=&quot;#3-通过脚本完成编译&quot; class=&quot;headerlink&quot; title=&quot;3. 通过脚本完成编译&quot;&gt;&lt;/a&gt;3. 通过脚本完成编译&lt;/h3&gt;&lt;p&gt;从 &lt;a href=&quot;https://github.com/kewlbear/FFmpeg-iOS-build-script&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/kewlbear/FFmpeg-iOS-build-script&lt;/a&gt; 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;3-通过脚本完成编译&quot;&gt;&lt;a href=&quot;#3-通过脚本完成编译&quot; class=&quot;headerlink&quot; title=&quot;3. 通过脚本完成编译&quot;&gt;&lt;/a&gt;3. 通过脚本完成编译&lt;/h3&gt;&lt;p&gt;从 &lt;a href=&quot;https://github.com/kewlbear/FFmpeg-iOS-build-script&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/kewlbear/FFmpeg-iOS-build-script&lt;/a&gt; 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件&lt;br&gt;(如果编译提示/bin/sh: …: No such file or directory等异常，可先CD到/usr/local/bin/目录下，直接调用build-ffmpeg.sh文件进行编译)&lt;/p&gt;
 &lt;h3 id=&quot;4-工程配置&quot;&gt;&lt;a href=&quot;#4-工程配置&quot; class=&quot;headerlink&quot; title=&quot;4. 工程配置&quot;&gt;&lt;/a&gt;4. 工程配置&lt;/h3&gt;&lt;p&gt;4.1 将FFmpeg-iOS文件夹添加至Xcode工程，确保“Library Search Paths”指向正确的FFmpeg-iOS/lib文件夹(通常添加至工程时会自动生成正确指向);确保“Header Search Paths”指向正确的FFmpeg-iOS/include文件夹（通常需手动设置）&lt;br&gt;4.2 确保项目添加了以下framework：libz.dylib、libbz2.dylib、libiconv.dylib、avfoundation、coremedia以及VideoToolbox&lt;br&gt;4.3 添加一个头文件引用 #include “avformat.h”，添加一个api语句：&lt;code&gt;av_register_all()&lt;/code&gt;&lt;br&gt;4.4 添加或修改一个类文件.m后缀改为.mm，开启混编模式。（swift混编模式中此步可省略）&lt;br&gt;4.5 运行工程，如果没有报错，则表示编译成功。恭喜，环境搭建完成了。（如果确保以上步骤正常，但编译时还是提示 ‘libavcodec/avcodec.h’ file not found，需修改“Header Search Paths”中FFmpeg-iOS/include文件夹的路径为绝对路径）&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;作者 &lt;a href=&quot;http://jamiepoet.github.io&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 01日    &lt;/p&gt;

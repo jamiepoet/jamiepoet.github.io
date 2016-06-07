@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://jamiepoet.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/index.html">
 <meta property="og:site_name" content="代码书生">
 <meta property="og:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。">
-<meta property="og:updated_time" content="2016-06-03T10:27:34.000Z">
+<meta property="og:updated_time" content="2016-06-06T08:35:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FFmpeg学习笔记(一、环境搭建)">
 <meta name="twitter:description" content="从今天开始大家一起来学习FFmpeg吧，目标是移动端 录制-&amp;gt;编码-&amp;gt;推流，收流-&amp;gt;解码-&amp;gt;播放整套流程。">
@@ -115,7 +115,7 @@
 
   <title> FFmpeg学习笔记(一、环境搭建) | 代码书生 </title>
 <!--   add by jamie 20160603 -->
-  <script type="text/javascript" src="http://tajs.qq.com/stats?sId=56609733" charset="UTF-8"></script>
+<!--   <script type="text/javascript" src="http://tajs.qq.com/stats?sId=56609733" charset="UTF-8"></script> -->
 <!--    -->
 </head>
 
@@ -126,6 +126,15 @@
 
 
 
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=56609733";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
 
 
 
@@ -334,7 +343,7 @@
 </code></pre><p>2.3 修改此文件权限：</p>
 <pre><code>cd /usr/local/bin
 sudo chmod 777 gas-preprocessor.pl
-</code></pre><h3 id="3-通过脚本完成编译"><a href="#3-通过脚本完成编译" class="headerlink" title="3. 通过脚本完成编译"></a>3. 通过脚本完成编译</h3><p>从 <a href="https://github.com/kewlbear/FFmpeg-iOS-build-script" target="_blank" rel="external">https://github.com/kewlbear/FFmpeg-iOS-build-script</a> 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件</p>
+</code></pre><h3 id="3-通过脚本完成编译"><a href="#3-通过脚本完成编译" class="headerlink" title="3. 通过脚本完成编译"></a>3. 通过脚本完成编译</h3><p>从 <a href="https://github.com/kewlbear/FFmpeg-iOS-build-script" target="_blank" rel="external">https://github.com/kewlbear/FFmpeg-iOS-build-script</a> 下载得到build-ffmpeg.sh文件 执行此文件，得到FFmpeg-iOS文件夹，里面包括两个子文件夹，分别包括头文件及.a文件<br>(如果编译提示/bin/sh: …: No such file or directory等异常，可先CD到/usr/local/bin/目录下，直接调用build-ffmpeg.sh文件进行编译)</p>
 <h3 id="4-工程配置"><a href="#4-工程配置" class="headerlink" title="4. 工程配置"></a>4. 工程配置</h3><p>4.1 将FFmpeg-iOS文件夹添加至Xcode工程，确保“Library Search Paths”指向正确的FFmpeg-iOS/lib文件夹(通常添加至工程时会自动生成正确指向);确保“Header Search Paths”指向正确的FFmpeg-iOS/include文件夹（通常需手动设置）<br>4.2 确保项目添加了以下framework：libz.dylib、libbz2.dylib、libiconv.dylib、avfoundation、coremedia以及VideoToolbox<br>4.3 添加一个头文件引用 #include “avformat.h”，添加一个api语句：<code>av_register_all()</code><br>4.4 添加或修改一个类文件.m后缀改为.mm，开启混编模式。（swift混编模式中此步可省略）<br>4.5 运行工程，如果没有报错，则表示编译成功。恭喜，环境搭建完成了。（如果确保以上步骤正常，但编译时还是提示 ‘libavcodec/avcodec.h’ file not found，需修改“Header Search Paths”中FFmpeg-iOS/include文件夹的路径为绝对路径）</p>
 <hr>
 <p>作者 <a href="http://jamiepoet.github.io">@代码书生</a><br>2016 年 06月 01日    </p>
@@ -409,6 +418,25 @@ sudo chmod 777 gas-preprocessor.pl
 
     <div class="post-spread">
       
+        <div class="ds-share flat" data-thread-key="2016/06/01/FFmpeg学习笔记-一、环境搭建/"
+     data-title="FFmpeg学习笔记(一、环境搭建)"
+     data-content=""
+     data-url="http://jamiepoet.github.io/2016/06/01/FFmpeg学习笔记-一、环境搭建/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
     </div>
   </div>
 
@@ -466,7 +494,7 @@ sudo chmod 777 gas-preprocessor.pl
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -483,7 +511,7 @@ sudo chmod 777 gas-preprocessor.pl
           
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
