@@ -103,13 +103,13 @@
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
-    
       <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
     
   </entry>
   
@@ -118,7 +118,7 @@
     <link href="http://jamiepoet.github.io/2016/06/06/%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84Hexo%E5%8D%9A%E5%AE%A2%EF%BC%88Mac%E7%8E%AF%E5%A2%83%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/06/06/搭建自己的Hexo博客（Mac环境）/</id>
     <published>2016-06-06T02:49:28.000Z</published>
-    <updated>2016-06-06T03:23:09.000Z</updated>
+    <updated>2016-06-15T16:00:00.000Z</updated>
     
     <content type="html">&lt;p&gt;相关的博客很多，碰到的问题应该都可以找到答案，所以只对环境搭建及建站做了详细描述，一起学习，有问题在评论中交流哈。&lt;br&gt;hexo中文文档： &lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://hexo.io/zh-cn/docs/&lt;/a&gt;&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
@@ -142,6 +142,7 @@ hexo server
 &lt;/ol&gt;
 &lt;h2 id=&quot;四、模板&quot;&gt;&lt;a href=&quot;#四、模板&quot; class=&quot;headerlink&quot; title=&quot;四、模板&quot;&gt;&lt;/a&gt;四、模板&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.zhihu.com/question/24422335&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.zhihu.com/question/24422335&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&quot;&gt;&lt;a href=&quot;#五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&quot; class=&quot;headerlink&quot; title=&quot;五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&quot;&gt;&lt;/a&gt;五、访问数统计、文章阅读数、多说评论、友情链接、打赏、其它配置等&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://theme-next.iissnan.com/theme-settings.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://theme-next.iissnan.com/theme-settings.html&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;六、将博客部署至Gighub&quot;&gt;&lt;a href=&quot;#六、将博客部署至Gighub&quot; class=&quot;headerlink&quot; title=&quot;六、将博客部署至Gighub&quot;&gt;&lt;/a&gt;六、将博客部署至Gighub&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://jingyan.baidu.com/article/d8072ac47aca0fec95cefd2d.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://jingyan.baidu.com/article/d8072ac47aca0fec95cefd2d.html&lt;/a&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;作者 &lt;a href=&quot;http://jamiepoet.github.io&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 06日    &lt;/p&gt;
 </content>
