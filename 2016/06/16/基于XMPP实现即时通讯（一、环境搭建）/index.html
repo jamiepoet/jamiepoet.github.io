@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/index.html">
 <meta property="og:site_name" content="代码书生">
 <meta property="og:description" content="一、IM协议及服务器选型参考http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/协议选型：XMPP已经成为标准的IM协议。XMPP官网：http://XMPP.org/服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。">
-<meta property="og:updated_time" content="2016-06-16T06:54:11.000Z">
+<meta property="og:updated_time" content="2016-06-16T07:00:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（一、环境搭建）">
 <meta name="twitter:description" content="一、IM协议及服务器选型参考http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/协议选型：XMPP已经成为标准的IM协议。XMPP官网：http://XMPP.org/服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。">
@@ -344,7 +344,7 @@
 <h2 id="三、MAC上搭建Openfire"><a href="#三、MAC上搭建Openfire" class="headerlink" title="三、MAC上搭建Openfire"></a>三、MAC上搭建Openfire</h2><p>参照 <a href="http://www.cnblogs.com/xiaodao/archive/2013/04/05/3000554.html" target="_blank" rel="external">http://www.cnblogs.com/xiaodao/archive/2013/04/05/3000554.html</a> 只需要执行到通过 admin登陆管理控制台即可。（不必通过数据库修改默认admin账户，可能会导致无法登录的情况，要修改可通过控制台进行新增或修改）</p>
 <h2 id="四、工程中集成XMPP"><a href="#四、工程中集成XMPP" class="headerlink" title="四、工程中集成XMPP"></a>四、工程中集成XMPP</h2><ol>
 <li>XMPP的git地址为： <a href="https://github.com/robbiehanson/XMPPFramework" target="_blank" rel="external">https://github.com/robbiehanson/XMPPFramework</a> 。其中有较详细文档</li>
-<li>集成至Xcode: 最简单的方法，通过CocoaPods集成: <code>pod “XMPPFramework”</code>。强烈推荐没有用过CocoaPods的同学使用这个第三方库管理工具。<br>CocoaPods详解之——使用篇： <a href="http://blog.csdn.net/wzzvictory/article/details/18737437" target="_blank" rel="external">http://blog.csdn.net/wzzvictory/article/details/18737437</a> （其中 <a href="http://ruby.taobao.org/" target="_blank" rel="external">http://ruby.taobao.org/</a>  这个源地址应该要更新成 <a href="https://ruby.taobao.org/" target="_blank" rel="external">https://ruby.taobao.org/</a>  ）</li>
+<li>集成至Xcode: 最简单的方法，通过CocoaPods集成: <code>pod “XMPPFramework”</code>。强烈推荐没有用过CocoaPods的同学使用这个第三方库管理工具。<br>CocoaPods详解之——使用篇：<br><a href="http://blog.csdn.net/wzzvictory/article/details/18737437" target="_blank" rel="external">http://blog.csdn.net/wzzvictory/article/details/18737437</a> （其中 <a href="http://ruby.taobao.org/" target="_blank" rel="external">http://ruby.taobao.org/</a>  这个源地址应该要更新成 <a href="https://ruby.taobao.org/" target="_blank" rel="external">https://ruby.taobao.org/</a>  ）</li>
 <li>如果cocoapods提示 target overrides the ENABLE_BITCODE build setting defined等信息，可以在build settings中将 Enable Bitcode 的选项中添加other内空：<code>$(inherited)</code>。此时选项显示为 <code>No-$(inherited)</code> 。再重新运行pods命令即可解决</li>
 </ol>
 <hr>

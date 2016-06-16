@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-06-16T06:54:11.000Z</updated>
+  <updated>2016-06-16T07:00:24.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://jamiepoet.github.io/2016/06/16/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/</id>
     <published>2016-06-16T06:49:56.000Z</published>
-    <updated>2016-06-16T06:54:11.000Z</updated>
+    <updated>2016-06-16T07:00:24.000Z</updated>
     
     <content type="html">&lt;h2 id=&quot;一、IM协议及服务器选型&quot;&gt;&lt;a href=&quot;#一、IM协议及服务器选型&quot; class=&quot;headerlink&quot; title=&quot;一、IM协议及服务器选型&quot;&gt;&lt;/a&gt;一、IM协议及服务器选型&lt;/h2&gt;&lt;p&gt;参考&lt;br&gt;&lt;a href=&quot;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&lt;/a&gt;&lt;br&gt;协议选型：XMPP已经成为标准的IM协议。XMPP官网：&lt;a href=&quot;http://XMPP.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://XMPP.org/&lt;/a&gt;&lt;br&gt;服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;从编程语言角度来看主要是JAVA和Erlang。JAVA语言的优势是类库完备，容易招人。Erlang的优势是hot code swap，live console， 高并发。而且ejabberd是对XMPP协议支持最好、实现最为全面的server。因此企业在不考虑独立开发服务器的情况下，初期选型基本建议采用ejabberd。&lt;/p&gt;
 &lt;p&gt;本文我们主要实践iOS端流程，不考虑太多服务器实现，因为Openfire易安装，插件功能丰富，我们使用Openfire&lt;/p&gt;
@@ -36,7 +36,7 @@
 &lt;h2 id=&quot;三、MAC上搭建Openfire&quot;&gt;&lt;a href=&quot;#三、MAC上搭建Openfire&quot; class=&quot;headerlink&quot; title=&quot;三、MAC上搭建Openfire&quot;&gt;&lt;/a&gt;三、MAC上搭建Openfire&lt;/h2&gt;&lt;p&gt;参照 &lt;a href=&quot;http://www.cnblogs.com/xiaodao/archive/2013/04/05/3000554.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.cnblogs.com/xiaodao/archive/2013/04/05/3000554.html&lt;/a&gt; 只需要执行到通过 admin登陆管理控制台即可。（不必通过数据库修改默认admin账户，可能会导致无法登录的情况，要修改可通过控制台进行新增或修改）&lt;/p&gt;
 &lt;h2 id=&quot;四、工程中集成XMPP&quot;&gt;&lt;a href=&quot;#四、工程中集成XMPP&quot; class=&quot;headerlink&quot; title=&quot;四、工程中集成XMPP&quot;&gt;&lt;/a&gt;四、工程中集成XMPP&lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;XMPP的git地址为： &lt;a href=&quot;https://github.com/robbiehanson/XMPPFramework&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/robbiehanson/XMPPFramework&lt;/a&gt; 。其中有较详细文档&lt;/li&gt;
-&lt;li&gt;集成至Xcode: 最简单的方法，通过CocoaPods集成: &lt;code&gt;pod “XMPPFramework”&lt;/code&gt;。强烈推荐没有用过CocoaPods的同学使用这个第三方库管理工具。&lt;br&gt;CocoaPods详解之——使用篇： &lt;a href=&quot;http://blog.csdn.net/wzzvictory/article/details/18737437&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/wzzvictory/article/details/18737437&lt;/a&gt; （其中 &lt;a href=&quot;http://ruby.taobao.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://ruby.taobao.org/&lt;/a&gt;  这个源地址应该要更新成 &lt;a href=&quot;https://ruby.taobao.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://ruby.taobao.org/&lt;/a&gt;  ）&lt;/li&gt;
+&lt;li&gt;集成至Xcode: 最简单的方法，通过CocoaPods集成: &lt;code&gt;pod “XMPPFramework”&lt;/code&gt;。强烈推荐没有用过CocoaPods的同学使用这个第三方库管理工具。&lt;br&gt;CocoaPods详解之——使用篇：&lt;br&gt;&lt;a href=&quot;http://blog.csdn.net/wzzvictory/article/details/18737437&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/wzzvictory/article/details/18737437&lt;/a&gt; （其中 &lt;a href=&quot;http://ruby.taobao.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://ruby.taobao.org/&lt;/a&gt;  这个源地址应该要更新成 &lt;a href=&quot;https://ruby.taobao.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://ruby.taobao.org/&lt;/a&gt;  ）&lt;/li&gt;
 &lt;li&gt;如果cocoapods提示 target overrides the ENABLE_BITCODE build setting defined等信息，可以在build settings中将 Enable Bitcode 的选项中添加other内空：&lt;code&gt;$(inherited)&lt;/code&gt;。此时选项显示为 &lt;code&gt;No-$(inherited)&lt;/code&gt; 。再重新运行pods命令即可解决&lt;/li&gt;
 &lt;/ol&gt;
 &lt;hr&gt;
@@ -103,13 +103,13 @@
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
+      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
+    
       <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
-      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
     
   </entry>
   
