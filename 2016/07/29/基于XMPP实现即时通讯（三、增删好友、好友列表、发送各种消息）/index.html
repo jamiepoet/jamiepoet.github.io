@@ -1,0 +1,1177 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,Mac,XMPP,IM," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="代码书生" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）">
+<meta property="og:url" content="http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/index.html">
+<meta property="og:site_name" content="代码书生">
+<meta property="og:description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
+<meta property="og:updated_time" content="2016-07-29T09:03:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）">
+<meta name="twitter:description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息） | 代码书生 </title>
+<!--   add by jamie 20160603 -->
+<!--   <script type="text/javascript" src="http://tajs.qq.com/stats?sId=56609733" charset="UTF-8"></script> -->
+<!--    -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=56609733";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">代码书生</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">碧海琼涛连天涯，快意心波逐浪花</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-29T16:57:59+08:00" content="2016-07-29">
+              2016-07-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/即时通讯（IM）/" itemprop="url" rel="index">
+                    <span itemprop="name">即时通讯（IM）</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/" class="leancloud_visitors" data-flag-title="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：<code>pod &quot;MessageDisplayKit&quot;, pod &quot;XHPopMenu&quot;</code><br>同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： <a href="https://www.qcloud.com/product/cos.html" target="_blank" rel="external">https://www.qcloud.com/product/cos.html</a> 。整个完整的Demo会在最后一节放到个人github上。<br><a id="more"></a></p>
+<h2 id="一、增删好友"><a href="#一、增删好友" class="headerlink" title="一、增删好友"></a>一、增删好友</h2><p>首先了解一下XMPP的通信有三种方式：message、presence和iq，主要内容和区别可以看下：<a href="http://my.oschina.net/greki/blog/272867" target="_blank" rel="external">http://my.oschina.net/greki/blog/272867</a> 简单了解下。<br>然后需要知道好友相关请求使用的是presence, 它有以下几种type：</p>
+<pre><code>available: 表示处于在线状态(通知好友在线)
+unavailable: 表示处于离线状态（通知好友下线）
+subscribe: 表示发出添加好友的申请（添加好友请求）
+unsubscribe: 表示发出删除好友的申请（删除好友请求）
+unsubscribed: 表示拒绝添加对方为好友（拒绝添加对方为好友）
+error: 表示presence信息报中包含了一个错误消息。（出错）
+</code></pre><h3 id="1-添加好友"><a href="#1-添加好友" class="headerlink" title="1. 添加好友"></a>1. 添加好友</h3><p>先申请花名册并进行激活</p>
+<pre><code>//花名册相关
+var _xmppRoster: XMPPRoster!
+var _xmppRosterStorage = XMPPRosterCoreDataStorage.sharedInstance()     //花名单存储
+</code></pre><p>在activeXMPPModules方法中激活模块：</p>
+<pre><code>//花名册
+ _xmppRoster = XMPPRoster(rosterStorage: _xmppRosterStorage)
+ //自动获取用户列表
+ _xmppRoster.autoFetchRoster = true
+ _xmppRoster.autoAcceptKnownPresenceSubscriptionRequests = true
+ //激活&amp;添加代理
+ _xmppRoster.activate(_xmppStream)
+ _xmppRoster.addDelegate(self, delegateQueue: dispatch_get_main_queue())
+
+ //重连
+ _xmppReconnect = XMPPReconnect()
+ _xmppReconnect.activate(_xmppStream)
+</code></pre><p>功能实现：</p>
+<pre><code>/**
+     添加好友
+
+ - parameter userId:         好友id
+ - parameter addFriendBlock: 添加好友请求的结果回调（并非好友回复的结果，只是请求是否发送成功的回调）
+ */
+func addFriend(friendId: String, addFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+
+    let friendJidString = self.getChatJidString(friendId)
+    //先判断是不是添加了自己
+    if friendJidString == &quot;\(_userId!)@\(vHostChat)&quot;{
+        if addFriendBlock != nil{
+            addFriendBlock!(isSuccess: false, faildMsg: &quot;你不能添加你自己哦&quot;)
+            return
+        }
+    }
+
+    // 先判断是否已经是我的好友，如果是，就不再添加
+    let userJID = XMPPJID.jidWithString(friendJidString)
+    if let theFirendData = _xmppRosterStorage.userForJID(userJID, xmppStream: _xmppStream, managedObjectContext: _xmppRosterStorage.mainThreadManagedObjectContext){
+        if theFirendData.subscription == &quot;to&quot; || theFirendData.subscription == &quot;both&quot;{
+            if addFriendBlock != nil{
+                addFriendBlock!(isSuccess: false, faildMsg: &quot;\(friendJidString)已经是你的好友了或者已发送过请求了哦&quot;)
+                return
+            }
+        }
+
+    }
+    _addFriendBlock = addFriendBlock
+    _xmppRoster.subscribePresenceToUser(userJID)
+}
+</code></pre><h3 id="2-删除好友"><a href="#2-删除好友" class="headerlink" title="2. 删除好友"></a>2. 删除好友</h3><pre><code>func deleteFriend(friendJid: XMPPJID, deleteFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+    _deleteFriendBlock = deleteFriendBlock
+    _xmppRoster.removeUser(friendJid)
+}
+</code></pre><h3 id="3-增删好友的相关回调"><a href="#3-增删好友的相关回调" class="headerlink" title="3. 增删好友的相关回调"></a>3. 增删好友的相关回调</h3><p> // MARK:  ——————————–  好友列表相关回调 ——————————-</p>
+<pre><code>//获取到一个好友节点- 已经互为好友以后，会回调此方法
+func xmppRoster(sender: XMPPRoster!, didReceiveRosterItem item: DDXMLElement!) {
+    DPrintln(&quot;11 item = \(item)&quot;)
+}
+
+func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
+    DPrintln(&quot;好友列表加载完毕&quot;)
+}
+</code></pre><p>在下面两个回调中响应好友申请请求及被删除的回调，可能会有人疑惑为何只有提示框和选择交互部分内容，没有数据库更新，UI更新通知等内容。这个是因为在下一节好友列表获取中，可以把好友列表搜索器设置成UI界面的代理，当好友列表有任何信息更新时，让UI界面的tableview.reloadData()即可，所以这两个方法只要让用户进行是否同意的选择及相关提示即可</p>
+<pre><code>    func xmppRoster(sender: XMPPRoster!, didReceivePresenceSubscriptionRequest presence: XMPPPresence!) {
+        DPrintln(&quot;\(presence)&quot;)
+
+        // 好友在线状态
+        let type = presence.type()
+        let fromUser = presence.from().user
+        let user = _xmppStream.myJID.user
+        DPrintln(&quot;接收到状态为：\(type),来自发送者\(fromUser),接收者\(user)&quot;)
+
+        // 防止自己添加自己为好友
+        if fromUser != user{
+            switch type {
+            case &quot;available&quot;:
+                DPrintln(&quot;好友上线&quot;)
+            case &quot;away&quot;:
+                DPrintln(&quot;好友离开&quot;)
+            case &quot;do not disturb&quot;:
+                DPrintln(&quot;好友忙碌&quot;)
+            case &quot;unavailable&quot;:
+                DPrintln(&quot;好友下线&quot;)
+            case &quot;subscribe&quot;:
+                DPrintln(&quot;请求添加好友&quot;)
+                _addMeJid = presence.from()
+                let alert = UIAlertView(title: &quot;好友申请&quot;, message: &quot;\(fromUser)请求添加你为好友，是否同意?&quot;, delegate: self, cancelButtonTitle: &quot;取消&quot;, otherButtonTitles: &quot;确定&quot;)
+                alert.tag = vAddFriendAlertTag
+                alert.show()
+            case &quot;unsubscribe&quot;:
+                DPrintln(&quot;请求并删除了我这个好友&quot;)
+                case &quot;unsubscribed&quot;:
+                DPrintln(&quot;对方拒绝了我的好友请求&quot;)
+                case &quot;error&quot;:
+                DPrintln(&quot;错误信息&quot;)
+            default:
+                DPrintln(&quot;其它信息 type = \(type)&quot;)
+            }
+        }
+    }
+
+    func xmppRoster(sender: XMPPRoster!, didReceiveRosterPush iq: XMPPIQ!) {
+
+        let query = iq.elementForName(&quot;query&quot;).childAtIndex(0) as! DDXMLElement
+
+        let jidString = query.attributeForName(&quot;jid&quot;).stringValue()
+        let subscription = query.attributeForName(&quot;subscription&quot;).stringValue()
+        if let ask = query.attributeForName(&quot;ask&quot;)
+        {
+            DPrintln(&quot;请求类型 \(ask.stringValue())&quot;)
+            if _addFriendBlock != nil{
+                _addFriendBlock!(isSuccess: true, faildMsg: nil)
+                _addFriendBlock = nil
+            }
+            return
+        }
+
+        switch subscription {
+        case &quot;from&quot;:
+            DPrintln(&quot;我已同意对方添加我为好友，关系确认成功&quot;)
+            //此处不用提示，因为同意对方后，就会双方都变成彼此的好友，会进入both，同时 from会回调两次,ask也会被调用两次（从from变成both）
+//            Tools.shared.showAlertViewAndDismissDefault(&quot;你已经成为\(jidString)的好友&quot;, message: nil)
+
+        case &quot;to&quot;:
+            DPrintln(&quot;添加对方为好友成功,或者被对方删除&quot;)
+            //此处不用提示，因为添加好友：默认对方同意后，就会双方都变成彼此的好友，会进入both，同时 to会回调两次
+            //还有可能是被对方删除我这个好友的回调
+//            Tools.shared.showAlertViewAndDismissDefault(&quot;\(jidString)已经成为你的好友&quot;, message: nil)
+        case &quot;both&quot;:
+            DPrintln(&quot;添加好友成功，彼此成为好友&quot;)
+            //此处不用提示，因为默认对方同意后，就会双方都变成彼此的好友，会进入both，同时 to会回调两次
+            Tools.shared.showAlertViewAndDismissDefault(&quot;\(jidString)和你已经互为好友&quot;, message: nil)
+
+        case &quot;remove&quot;:
+            DPrintln(&quot;删除好友成功&quot;)
+            if _deleteFriendBlock != nil{
+                //删除会调用两次,subscription会从 from(带ask) 变成 none(带ask)，最后是remove
+                _deleteFriendBlock!(isSuccess: true, faildMsg: nil)
+                _deleteFriendBlock = nil
+            }
+
+        default:
+            DPrintln(&quot;subscription = \(subscription)）&quot;)
+        }
+
+    }
+</code></pre><h2 id="二、好友列表"><a href="#二、好友列表" class="headerlink" title="二、好友列表"></a>二、好友列表</h2><p>好友列表可以从服务器获取，也可以在本地XMPP默认数据库中获取（XMPPRosterCoreDataStorage.sharedInstance() 中），通常用后者方式，设置代理后可自动监听好友信息的更新</p>
+<pre><code>//好友列表-//好友搜索结果控制器
+       func getFriendList(sucessResult: (NSFetchedResultsController -&gt; Void)?, faildMsg: (String? -&gt; Void)?){
+
+           if !_xmppStream.isAuthenticated()
+           {
+               if faildMsg != nil{
+                   return faildMsg!(&quot;请先登录哦&quot;)
+               }
+           }
+
+           let context = _xmppRosterStorage.mainThreadManagedObjectContext
+           //从CoreData中获取数据
+           //通过实体获取FetchRequest实体
+           let request = NSFetchRequest(entityName: NSStringFromClass(XMPPUserCoreDataStorageObject))
+
+   //        //添加排序规则
+   //        let sortFriend = NSSortDescriptor(key: &quot;jidStr&quot;, ascending: true)
+   //        request.sortDescriptors = [sortFriend]
+
+           // 在线状态排序
+           let sortOnLine = NSSortDescriptor(key: &quot;sectionNum&quot;, ascending: true)
+           // 显示的名称排序
+           let sortByName = NSSortDescriptor(key: &quot;displayName&quot;, ascending: true)
+
+           // 添加排序
+           request.sortDescriptors = [sortOnLine, sortByName]
+
+           // 添加谓词过滤器 状态为None的排除（加好友对方还没确认，或者好友关系，被对方删除）
+           request.predicate = NSPredicate(format: &quot;!(subscription CONTAINS &apos;none&apos;)&quot;)
+
+           dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+
+               //获取FRC
+               let friendResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+               do {
+                   try friendResultsController.performFetch()
+               } catch let error as NSError {
+
+                   dispatch_async(dispatch_get_main_queue(), {
+                       if faildMsg != nil{
+                           return faildMsg!(error.description)
+                       }
+                   })
+               }
+
+               dispatch_async(dispatch_get_main_queue(), {
+                   if sucessResult != nil{
+                       return sucessResult!(friendResultsController)
+                   }
+               })
+           }
+       }
+</code></pre><p>使用时，将得到的friendResultsConrtoller.sections.count作为UI显示好友列表tableview的numberOfSectionsInTableView,sections对应位置的numberOfObjects为numberOfRowsInSection，friendResultsConrtoller?.objectAtIndexPath(indexPath) 可以得到一个XMPPUserCoreDataStorageObject对象，作为每个cell的UI数据源。<br>同时将friendResultsConrtoller的代理设置成这个好友列表的UIViewController，在其代理 方法controllerDidChangeContent实现self.tableView.reloadData()，即可针对数据库更新来更新UI。</p>
+<h2 id="三、发送各种消息"><a href="#三、发送各种消息" class="headerlink" title="三、发送各种消息"></a>三、发送各种消息</h2><h3 id="1-发送"><a href="#1-发送" class="headerlink" title="1. 发送"></a>1. 发送</h3><p>在具体项目中实现发送文字以外的消息时（图片，视频，语音等），通常还是采用文字消息的xml方式来通过XMPP传递，只是增加自已约定的属性来区分真正的消息类型，多媒体消息通常会先上传到服务器，发送时传递给对方具体URL和相关属性即可；<br>表情的发送也可以走文字xml格式，只是标记真正类型为表情，同时传递的内容是表情名称或URL地址，接受方解析完成后直接将工程或网络中的表情显示出来即可。<br>下面看具体Demo方法</p>
+<pre><code>/**
+     发送消息(文字，图片，视频，语音等所有格式),包括单独聊天和群聊
+
+     - parameter messageType:      消息类型，来自MessageDisplayKit,也可以自己实现枚举
+     - parameter messageURL:       多媒体消息时，传递的是URL
+     - parameter messageText:      文字消息时的文字内容
+     - parameter otherMessage:     其它附带属性
+     - parameter receiveId:        发送对象的id，可能是某个人也可以是某个房间id
+     - parameter isRoomChat:       是否是聊天室（房间）聊天
+     - parameter sendMessageBlock: 发送成功后的回调（来确保消息已成功到达服务器）
+     */
+    func sendMessage(messageType: XHBubbleMessageMediaType, messageURL: String?, messageText: String?, otherMessage: String?, receiveId: String, isRoomChat: Bool,sendMessageBlock: JDXMPP_SendMessageBlock) {
+
+        _sendMessageBlock = nil
+        _sendMessageBlock = sendMessageBlock
+
+        let bodyElement = DDXMLElement(name: &quot;body&quot;)
+        if messageType == .Text{
+            bodyElement.setStringValue(messageText)
+        }else {
+            bodyElement.setStringValue(messageURL)
+        }
+
+        let messageElement = DDXMLElement(name: &quot;message&quot;)
+        messageElement.addAttributeWithName(&quot;type&quot;, stringValue: isRoomChat ? &quot;groupchat&quot; : &quot;chat&quot;)
+        messageElement.addAttributeWithName(&quot;releayType&quot;, stringValue: self.getMessageTypeString(messageType))
+        if otherMessage != nil{
+            messageElement.addAttributeWithName(&quot;otherMessage&quot;, stringValue: otherMessage!)
+        }
+
+        let recevieJidString = self.getChatJidString(receiveId)
+        messageElement.addAttributeWithName(&quot;to&quot;, stringValue: recevieJidString)
+        messageElement.addChild(bodyElement)
+        _xmppStream.sendElement(messageElement)
+    }
+</code></pre><p>对应的getMessageTypeString方法是将枚举转换成可传递的string,接受者收到这个string后通过getMessageTypeFromString来还原成对应的type</p>
+<h3 id="2-发送回调"><a href="#2-发送回调" class="headerlink" title="2. 发送回调"></a>2. 发送回调</h3><pre><code>// MARK:  --------------------------------  发送消息-回调  -------------------------------
+   //message是一种基本推送消息方法，它不要求响应。主要用于IM、groupChat、alert和notification之类的应用中。
+   func xmppStream(sender: XMPPStream!, didSendMessage message: XMPPMessage!) {
+       DPrintln(&quot;发送成功&quot;)
+       if _sendMessageBlock != nil{
+           _sendMessageBlock!(isSucess: true, faildMsg: nil)
+       }
+   }
+
+   func xmppStream(sender: XMPPStream!, didFailToSendMessage message: XMPPMessage!, error: NSError!) {
+       Tools.shared.showAlertViewAndDismissDefault(nil, message: &quot;消息发送失败&quot;)
+       if _sendMessageBlock != nil{
+           _sendMessageBlock!(isSucess: false, faildMsg: error.description)
+       }
+   }
+</code></pre><h3 id="3-接收多种消息类型"><a href="#3-接收多种消息类型" class="headerlink" title="3. 接收多种消息类型"></a>3. 接收多种消息类型</h3><p> 结合发送消息复用文字（”chat”）类型的实现方式，接收消息也要对应进行解析，其中getXHMessageFromXMPPMessage方法可以解析当前收到的消息，也可以解析从数据库中得到的历史记录消息。<br>关于已读和未读，本地设备可以再建一个记录消息数据库，标记已读未读红点等，同时在后台实现本地推送；服务器端需要建立离线消息推送机制；如果涉及到多设备的同步就更复杂了，本Demo不讨论已读状态的实现</p>
+<pre><code>// MARK:  --------------------------------  接收消息-来自XMPP回调  -------------------------------
+   func xmppStream(sender: XMPPStream!, didReceiveMessage message: XMPPMessage!) {
+       DPrintln(&quot;收到消息 \(message)&quot;)
+
+       if message.isChatMessageWithBody(){
+
+           let newMessage = self.getXHMessageFromXMPPMessage(message, messageSender: message.from().full(), isUserSendMessage: false, isHistory: false)
+           //用通知的方式来触发聊天界面刷新相关UI
+           NSNotificationCenter.defaultCenter().postNotificationName(kXMPPNewMessage, object: newMessage, userInfo: nil)
+       }
+       else{
+           DPrintln(&quot;收到其它类型消息/非正常消息&quot;)
+           //在这里可以判断是否是消息回执，对消息回执作处理，可参考：http://blog.csdn.net/huwenfeng_2011/article/details/43459039
+           //消息回执说明文档 http://xmpp.org/extensions/xep-0184.html
+       }
+   }
+
+   /**
+    将XMPPMessage转成和UI可对应的XHMessage,(XHMessage来自MessageDisplayKit,也可以实现自己的UI模型)
+
+    - parameter message:           收到的消息
+    - parameter messageSender:     消息发送者
+    - parameter isUserSendMessage: 是否是我自己发送的消息
+    - parameter isHistory:         是否是历史记录
+
+    - returns: 返回XHMessage
+    */
+   func getXHMessageFromXMPPMessage(message: XMPPMessage, messageSender: String?, isUserSendMessage: Bool, isHistory: Bool) -&gt; XHMessage {
+
+       var sender = messageSender
+       if sender == nil{
+           //发送者为空，判定为自己发出去的信息
+          sender = &quot;\(_userId!)@\(vHostChat)&quot;
+       }
+       let nowTime = NSDate()
+       let mediaText = message.body()
+
+       var newMessage: XHMessage
+       var messageType = XHBubbleMessageMediaType.Text
+       if let releayType = message.attributeForName(&quot;releayType&quot;){
+           messageType = self.getMessageTypeFromString(releayType.stringValue())
+       }
+
+       switch messageType {
+       case .Emotion:
+           newMessage = XHMessage(emotionPath: NSBundle.mainBundle().pathForResource(mediaText, ofType: nil), sender: sender, timestamp: nowTime)
+       case .LocalPosition:
+           newMessage = XHMessage(text: &quot;发送了位置信息&quot;, sender: sender, timestamp: nowTime)
+       case .Photo:
+           newMessage = XHMessage(photo: nil, thumbnailUrl: mediaText, originPhotoUrl: nil, sender: sender, timestamp: nowTime)
+       case .Text:
+           newMessage = XHMessage(text: mediaText, sender: sender, timestamp: nowTime)
+       case .Video:
+           newMessage = XHMessage(videoConverPhoto: nil, videoPath: nil, videoUrl: mediaText, sender: sender, timestamp: nowTime)
+       case .Voice:
+           var durantion = &quot;60&quot;
+           if let durantionMessage = message.attributeForName(&quot;otherMessage&quot;){
+               durantion = durantionMessage.stringValue()
+           }
+
+           newMessage = XHMessage(voicePath: nil, voiceUrl: mediaText, voiceDuration: durantion, sender: sender, timestamp: nowTime)
+           //当前收到的消息，通过腾讯云来下载语音（可以放到UI界面来实现）
+           //历史记录复用此方法时，通过查询Url来得到可能已存在本地的voicepath
+           let resultPath = JDTXCloudManager.shared.getFilePathFromURLString(mediaText, typeString: &quot;file&quot;)
+           if NSFileManager.defaultManager().fileExistsAtPath(resultPath){
+               newMessage.voicePath = resultPath
+           }
+
+       }
+       DPrintln(&quot;sender = \(sender)&quot;)
+       if isUserSendMessage {
+           newMessage.bubbleMessageType = .Sending         //发送消息
+       }else{
+           newMessage.bubbleMessageType = .Receiving       //接收消息
+       }
+       //未读已读推送等需定制化实现，这里简单将历史信息全部标记成已读
+       newMessage.isRead = !isHistory
+       return newMessage
+   }
+</code></pre><hr>
+<p>作者 <a href="http://jamiepoet.github.io">@代码书生</a><br>2016 年 06月 16日    </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/pay.png" alt="代码书生 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/Mac/" rel="tag">#Mac</a>
+          
+            <a href="/tags/XMPP/" rel="tag">#XMPP</a>
+          
+            <a href="/tags/IM/" rel="tag">#IM</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/17/基于XMPP实现即时通讯（二、登陆、上下线、接收消息）/" rel="next" title="基于XMPP实现即时通讯（二、登陆、上下线、接收消息）">
+                <i class="fa fa-chevron-left"></i> 基于XMPP实现即时通讯（二、登陆、上下线、接收消息）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/"
+     data-title="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）"
+     data-content=""
+     data-url="http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/"
+           data-title="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）" data-url="http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/jamiepoet.jpg"
+               alt="代码书生" />
+          <p class="site-author-name" itemprop="name">代码书生</p>
+          <p class="site-description motion-element" itemprop="description">代码书生的个人博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Jamie-Ling-iOS" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1896300067/profile?rightmod=1&wvr=6&mod=personinfo&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jamiepoet.github.io/404.html" title="公益404" target="_blank">公益404</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、增删好友"><span class="nav-number">1.</span> <span class="nav-text">一、增删好友</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-添加好友"><span class="nav-number">1.1.</span> <span class="nav-text">1. 添加好友</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-删除好友"><span class="nav-number">1.2.</span> <span class="nav-text">2. 删除好友</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-增删好友的相关回调"><span class="nav-number">1.3.</span> <span class="nav-text">3. 增删好友的相关回调</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、好友列表"><span class="nav-number">2.</span> <span class="nav-text">二、好友列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、发送各种消息"><span class="nav-number">3.</span> <span class="nav-text">三、发送各种消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-发送"><span class="nav-number">3.1.</span> <span class="nav-text">1. 发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-发送回调"><span class="nav-number">3.2.</span> <span class="nav-text">2. 发送回调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-接收多种消息类型"><span class="nav-number">3.3.</span> <span class="nav-text">3. 接收多种消息类型</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">代码书生</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="look-info">
+<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+<div class="user-info">
+<span id="busuanzi_container_site_pv">您是第<span id="busuanzi_value_site_uv"></span>位访客</span>
+</div>
+
+        
+
+        
+      </div>
+
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jamiepoet"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("9G9Lx2fjhFIkB76DdrMP4n1e-gzGzoHsz", "ApLHLGKCjzerjBtl3tn2y1S0");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

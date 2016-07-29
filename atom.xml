@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-06-17T02:49:11.000Z</updated>
+  <updated>2016-07-29T09:03:09.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -16,21 +16,391 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）</title>
+    <link href="http://jamiepoet.github.io/2016/07/29/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%B8%89%E3%80%81%E5%A2%9E%E5%88%A0%E5%A5%BD%E5%8F%8B%E3%80%81%E5%A5%BD%E5%8F%8B%E5%88%97%E8%A1%A8%E3%80%81%E5%8F%91%E9%80%81%E5%90%84%E7%A7%8D%E6%B6%88%E6%81%AF%EF%BC%89/"/>
+    <id>http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/</id>
+    <published>2016-07-29T08:57:59.000Z</published>
+    <updated>2016-07-29T09:03:09.000Z</updated>
+    
+    <content type="html">&lt;p&gt;在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：&lt;code&gt;pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;&lt;/code&gt;&lt;br&gt;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： &lt;a href=&quot;https://www.qcloud.com/product/cos.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.qcloud.com/product/cos.html&lt;/a&gt; 。整个完整的Demo会在最后一节放到个人github上。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;一、增删好友&quot;&gt;&lt;a href=&quot;#一、增删好友&quot; class=&quot;headerlink&quot; title=&quot;一、增删好友&quot;&gt;&lt;/a&gt;一、增删好友&lt;/h2&gt;&lt;p&gt;首先了解一下XMPP的通信有三种方式：message、presence和iq，主要内容和区别可以看下：&lt;a href=&quot;http://my.oschina.net/greki/blog/272867&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://my.oschina.net/greki/blog/272867&lt;/a&gt; 简单了解下。&lt;br&gt;然后需要知道好友相关请求使用的是presence, 它有以下几种type：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;available: 表示处于在线状态(通知好友在线)
+unavailable: 表示处于离线状态（通知好友下线）
+subscribe: 表示发出添加好友的申请（添加好友请求）
+unsubscribe: 表示发出删除好友的申请（删除好友请求）
+unsubscribed: 表示拒绝添加对方为好友（拒绝添加对方为好友）
+error: 表示presence信息报中包含了一个错误消息。（出错）
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;1-添加好友&quot;&gt;&lt;a href=&quot;#1-添加好友&quot; class=&quot;headerlink&quot; title=&quot;1. 添加好友&quot;&gt;&lt;/a&gt;1. 添加好友&lt;/h3&gt;&lt;p&gt;先申请花名册并进行激活&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//花名册相关
+var _xmppRoster: XMPPRoster!
+var _xmppRosterStorage = XMPPRosterCoreDataStorage.sharedInstance()     //花名单存储
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在activeXMPPModules方法中激活模块：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//花名册
+ _xmppRoster = XMPPRoster(rosterStorage: _xmppRosterStorage)
+ //自动获取用户列表
+ _xmppRoster.autoFetchRoster = true
+ _xmppRoster.autoAcceptKnownPresenceSubscriptionRequests = true
+ //激活&amp;amp;添加代理
+ _xmppRoster.activate(_xmppStream)
+ _xmppRoster.addDelegate(self, delegateQueue: dispatch_get_main_queue())
+
+ //重连
+ _xmppReconnect = XMPPReconnect()
+ _xmppReconnect.activate(_xmppStream)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;功能实现：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/**
+     添加好友
+
+ - parameter userId:         好友id
+ - parameter addFriendBlock: 添加好友请求的结果回调（并非好友回复的结果，只是请求是否发送成功的回调）
+ */
+func addFriend(friendId: String, addFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+
+    let friendJidString = self.getChatJidString(friendId)
+    //先判断是不是添加了自己
+    if friendJidString == &amp;quot;\(_userId!)@\(vHostChat)&amp;quot;{
+        if addFriendBlock != nil{
+            addFriendBlock!(isSuccess: false, faildMsg: &amp;quot;你不能添加你自己哦&amp;quot;)
+            return
+        }
+    }
+
+    // 先判断是否已经是我的好友，如果是，就不再添加
+    let userJID = XMPPJID.jidWithString(friendJidString)
+    if let theFirendData = _xmppRosterStorage.userForJID(userJID, xmppStream: _xmppStream, managedObjectContext: _xmppRosterStorage.mainThreadManagedObjectContext){
+        if theFirendData.subscription == &amp;quot;to&amp;quot; || theFirendData.subscription == &amp;quot;both&amp;quot;{
+            if addFriendBlock != nil{
+                addFriendBlock!(isSuccess: false, faildMsg: &amp;quot;\(friendJidString)已经是你的好友了或者已发送过请求了哦&amp;quot;)
+                return
+            }
+        }
+
+    }
+    _addFriendBlock = addFriendBlock
+    _xmppRoster.subscribePresenceToUser(userJID)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;2-删除好友&quot;&gt;&lt;a href=&quot;#2-删除好友&quot; class=&quot;headerlink&quot; title=&quot;2. 删除好友&quot;&gt;&lt;/a&gt;2. 删除好友&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;func deleteFriend(friendJid: XMPPJID, deleteFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+    _deleteFriendBlock = deleteFriendBlock
+    _xmppRoster.removeUser(friendJid)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;3-增删好友的相关回调&quot;&gt;&lt;a href=&quot;#3-增删好友的相关回调&quot; class=&quot;headerlink&quot; title=&quot;3. 增删好友的相关回调&quot;&gt;&lt;/a&gt;3. 增删好友的相关回调&lt;/h3&gt;&lt;p&gt; // MARK:  ——————————–  好友列表相关回调 ——————————-&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//获取到一个好友节点- 已经互为好友以后，会回调此方法
+func xmppRoster(sender: XMPPRoster!, didReceiveRosterItem item: DDXMLElement!) {
+    DPrintln(&amp;quot;11 item = \(item)&amp;quot;)
+}
+
+func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
+    DPrintln(&amp;quot;好友列表加载完毕&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在下面两个回调中响应好友申请请求及被删除的回调，可能会有人疑惑为何只有提示框和选择交互部分内容，没有数据库更新，UI更新通知等内容。这个是因为在下一节好友列表获取中，可以把好友列表搜索器设置成UI界面的代理，当好友列表有任何信息更新时，让UI界面的tableview.reloadData()即可，所以这两个方法只要让用户进行是否同意的选择及相关提示即可&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    func xmppRoster(sender: XMPPRoster!, didReceivePresenceSubscriptionRequest presence: XMPPPresence!) {
+        DPrintln(&amp;quot;\(presence)&amp;quot;)
+
+        // 好友在线状态
+        let type = presence.type()
+        let fromUser = presence.from().user
+        let user = _xmppStream.myJID.user
+        DPrintln(&amp;quot;接收到状态为：\(type),来自发送者\(fromUser),接收者\(user)&amp;quot;)
+
+        // 防止自己添加自己为好友
+        if fromUser != user{
+            switch type {
+            case &amp;quot;available&amp;quot;:
+                DPrintln(&amp;quot;好友上线&amp;quot;)
+            case &amp;quot;away&amp;quot;:
+                DPrintln(&amp;quot;好友离开&amp;quot;)
+            case &amp;quot;do not disturb&amp;quot;:
+                DPrintln(&amp;quot;好友忙碌&amp;quot;)
+            case &amp;quot;unavailable&amp;quot;:
+                DPrintln(&amp;quot;好友下线&amp;quot;)
+            case &amp;quot;subscribe&amp;quot;:
+                DPrintln(&amp;quot;请求添加好友&amp;quot;)
+                _addMeJid = presence.from()
+                let alert = UIAlertView(title: &amp;quot;好友申请&amp;quot;, message: &amp;quot;\(fromUser)请求添加你为好友，是否同意?&amp;quot;, delegate: self, cancelButtonTitle: &amp;quot;取消&amp;quot;, otherButtonTitles: &amp;quot;确定&amp;quot;)
+                alert.tag = vAddFriendAlertTag
+                alert.show()
+            case &amp;quot;unsubscribe&amp;quot;:
+                DPrintln(&amp;quot;请求并删除了我这个好友&amp;quot;)
+                case &amp;quot;unsubscribed&amp;quot;:
+                DPrintln(&amp;quot;对方拒绝了我的好友请求&amp;quot;)
+                case &amp;quot;error&amp;quot;:
+                DPrintln(&amp;quot;错误信息&amp;quot;)
+            default:
+                DPrintln(&amp;quot;其它信息 type = \(type)&amp;quot;)
+            }
+        }
+    }
+
+    func xmppRoster(sender: XMPPRoster!, didReceiveRosterPush iq: XMPPIQ!) {
+
+        let query = iq.elementForName(&amp;quot;query&amp;quot;).childAtIndex(0) as! DDXMLElement
+
+        let jidString = query.attributeForName(&amp;quot;jid&amp;quot;).stringValue()
+        let subscription = query.attributeForName(&amp;quot;subscription&amp;quot;).stringValue()
+        if let ask = query.attributeForName(&amp;quot;ask&amp;quot;)
+        {
+            DPrintln(&amp;quot;请求类型 \(ask.stringValue())&amp;quot;)
+            if _addFriendBlock != nil{
+                _addFriendBlock!(isSuccess: true, faildMsg: nil)
+                _addFriendBlock = nil
+            }
+            return
+        }
+
+        switch subscription {
+        case &amp;quot;from&amp;quot;:
+            DPrintln(&amp;quot;我已同意对方添加我为好友，关系确认成功&amp;quot;)
+            //此处不用提示，因为同意对方后，就会双方都变成彼此的好友，会进入both，同时 from会回调两次,ask也会被调用两次（从from变成both）
+//            Tools.shared.showAlertViewAndDismissDefault(&amp;quot;你已经成为\(jidString)的好友&amp;quot;, message: nil)
+
+        case &amp;quot;to&amp;quot;:
+            DPrintln(&amp;quot;添加对方为好友成功,或者被对方删除&amp;quot;)
+            //此处不用提示，因为添加好友：默认对方同意后，就会双方都变成彼此的好友，会进入both，同时 to会回调两次
+            //还有可能是被对方删除我这个好友的回调
+//            Tools.shared.showAlertViewAndDismissDefault(&amp;quot;\(jidString)已经成为你的好友&amp;quot;, message: nil)
+        case &amp;quot;both&amp;quot;:
+            DPrintln(&amp;quot;添加好友成功，彼此成为好友&amp;quot;)
+            //此处不用提示，因为默认对方同意后，就会双方都变成彼此的好友，会进入both，同时 to会回调两次
+            Tools.shared.showAlertViewAndDismissDefault(&amp;quot;\(jidString)和你已经互为好友&amp;quot;, message: nil)
+
+        case &amp;quot;remove&amp;quot;:
+            DPrintln(&amp;quot;删除好友成功&amp;quot;)
+            if _deleteFriendBlock != nil{
+                //删除会调用两次,subscription会从 from(带ask) 变成 none(带ask)，最后是remove
+                _deleteFriendBlock!(isSuccess: true, faildMsg: nil)
+                _deleteFriendBlock = nil
+            }
+
+        default:
+            DPrintln(&amp;quot;subscription = \(subscription)）&amp;quot;)
+        }
+
+    }
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&quot;二、好友列表&quot;&gt;&lt;a href=&quot;#二、好友列表&quot; class=&quot;headerlink&quot; title=&quot;二、好友列表&quot;&gt;&lt;/a&gt;二、好友列表&lt;/h2&gt;&lt;p&gt;好友列表可以从服务器获取，也可以在本地XMPP默认数据库中获取（XMPPRosterCoreDataStorage.sharedInstance() 中），通常用后者方式，设置代理后可自动监听好友信息的更新&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//好友列表-//好友搜索结果控制器
+       func getFriendList(sucessResult: (NSFetchedResultsController -&amp;gt; Void)?, faildMsg: (String? -&amp;gt; Void)?){
+
+           if !_xmppStream.isAuthenticated()
+           {
+               if faildMsg != nil{
+                   return faildMsg!(&amp;quot;请先登录哦&amp;quot;)
+               }
+           }
+
+           let context = _xmppRosterStorage.mainThreadManagedObjectContext
+           //从CoreData中获取数据
+           //通过实体获取FetchRequest实体
+           let request = NSFetchRequest(entityName: NSStringFromClass(XMPPUserCoreDataStorageObject))
+
+   //        //添加排序规则
+   //        let sortFriend = NSSortDescriptor(key: &amp;quot;jidStr&amp;quot;, ascending: true)
+   //        request.sortDescriptors = [sortFriend]
+
+           // 在线状态排序
+           let sortOnLine = NSSortDescriptor(key: &amp;quot;sectionNum&amp;quot;, ascending: true)
+           // 显示的名称排序
+           let sortByName = NSSortDescriptor(key: &amp;quot;displayName&amp;quot;, ascending: true)
+
+           // 添加排序
+           request.sortDescriptors = [sortOnLine, sortByName]
+
+           // 添加谓词过滤器 状态为None的排除（加好友对方还没确认，或者好友关系，被对方删除）
+           request.predicate = NSPredicate(format: &amp;quot;!(subscription CONTAINS &amp;apos;none&amp;apos;)&amp;quot;)
+
+           dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+
+               //获取FRC
+               let friendResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+               do {
+                   try friendResultsController.performFetch()
+               } catch let error as NSError {
+
+                   dispatch_async(dispatch_get_main_queue(), {
+                       if faildMsg != nil{
+                           return faildMsg!(error.description)
+                       }
+                   })
+               }
+
+               dispatch_async(dispatch_get_main_queue(), {
+                   if sucessResult != nil{
+                       return sucessResult!(friendResultsController)
+                   }
+               })
+           }
+       }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;使用时，将得到的friendResultsConrtoller.sections.count作为UI显示好友列表tableview的numberOfSectionsInTableView,sections对应位置的numberOfObjects为numberOfRowsInSection，friendResultsConrtoller?.objectAtIndexPath(indexPath) 可以得到一个XMPPUserCoreDataStorageObject对象，作为每个cell的UI数据源。&lt;br&gt;同时将friendResultsConrtoller的代理设置成这个好友列表的UIViewController，在其代理 方法controllerDidChangeContent实现self.tableView.reloadData()，即可针对数据库更新来更新UI。&lt;/p&gt;
+&lt;h2 id=&quot;三、发送各种消息&quot;&gt;&lt;a href=&quot;#三、发送各种消息&quot; class=&quot;headerlink&quot; title=&quot;三、发送各种消息&quot;&gt;&lt;/a&gt;三、发送各种消息&lt;/h2&gt;&lt;h3 id=&quot;1-发送&quot;&gt;&lt;a href=&quot;#1-发送&quot; class=&quot;headerlink&quot; title=&quot;1. 发送&quot;&gt;&lt;/a&gt;1. 发送&lt;/h3&gt;&lt;p&gt;在具体项目中实现发送文字以外的消息时（图片，视频，语音等），通常还是采用文字消息的xml方式来通过XMPP传递，只是增加自已约定的属性来区分真正的消息类型，多媒体消息通常会先上传到服务器，发送时传递给对方具体URL和相关属性即可；&lt;br&gt;表情的发送也可以走文字xml格式，只是标记真正类型为表情，同时传递的内容是表情名称或URL地址，接受方解析完成后直接将工程或网络中的表情显示出来即可。&lt;br&gt;下面看具体Demo方法&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/**
+     发送消息(文字，图片，视频，语音等所有格式),包括单独聊天和群聊
+
+     - parameter messageType:      消息类型，来自MessageDisplayKit,也可以自己实现枚举
+     - parameter messageURL:       多媒体消息时，传递的是URL
+     - parameter messageText:      文字消息时的文字内容
+     - parameter otherMessage:     其它附带属性
+     - parameter receiveId:        发送对象的id，可能是某个人也可以是某个房间id
+     - parameter isRoomChat:       是否是聊天室（房间）聊天
+     - parameter sendMessageBlock: 发送成功后的回调（来确保消息已成功到达服务器）
+     */
+    func sendMessage(messageType: XHBubbleMessageMediaType, messageURL: String?, messageText: String?, otherMessage: String?, receiveId: String, isRoomChat: Bool,sendMessageBlock: JDXMPP_SendMessageBlock) {
+
+        _sendMessageBlock = nil
+        _sendMessageBlock = sendMessageBlock
+
+        let bodyElement = DDXMLElement(name: &amp;quot;body&amp;quot;)
+        if messageType == .Text{
+            bodyElement.setStringValue(messageText)
+        }else {
+            bodyElement.setStringValue(messageURL)
+        }
+
+        let messageElement = DDXMLElement(name: &amp;quot;message&amp;quot;)
+        messageElement.addAttributeWithName(&amp;quot;type&amp;quot;, stringValue: isRoomChat ? &amp;quot;groupchat&amp;quot; : &amp;quot;chat&amp;quot;)
+        messageElement.addAttributeWithName(&amp;quot;releayType&amp;quot;, stringValue: self.getMessageTypeString(messageType))
+        if otherMessage != nil{
+            messageElement.addAttributeWithName(&amp;quot;otherMessage&amp;quot;, stringValue: otherMessage!)
+        }
+
+        let recevieJidString = self.getChatJidString(receiveId)
+        messageElement.addAttributeWithName(&amp;quot;to&amp;quot;, stringValue: recevieJidString)
+        messageElement.addChild(bodyElement)
+        _xmppStream.sendElement(messageElement)
+    }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;对应的getMessageTypeString方法是将枚举转换成可传递的string,接受者收到这个string后通过getMessageTypeFromString来还原成对应的type&lt;/p&gt;
+&lt;h3 id=&quot;2-发送回调&quot;&gt;&lt;a href=&quot;#2-发送回调&quot; class=&quot;headerlink&quot; title=&quot;2. 发送回调&quot;&gt;&lt;/a&gt;2. 发送回调&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;// MARK:  --------------------------------  发送消息-回调  -------------------------------
+   //message是一种基本推送消息方法，它不要求响应。主要用于IM、groupChat、alert和notification之类的应用中。
+   func xmppStream(sender: XMPPStream!, didSendMessage message: XMPPMessage!) {
+       DPrintln(&amp;quot;发送成功&amp;quot;)
+       if _sendMessageBlock != nil{
+           _sendMessageBlock!(isSucess: true, faildMsg: nil)
+       }
+   }
+
+   func xmppStream(sender: XMPPStream!, didFailToSendMessage message: XMPPMessage!, error: NSError!) {
+       Tools.shared.showAlertViewAndDismissDefault(nil, message: &amp;quot;消息发送失败&amp;quot;)
+       if _sendMessageBlock != nil{
+           _sendMessageBlock!(isSucess: false, faildMsg: error.description)
+       }
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;3-接收多种消息类型&quot;&gt;&lt;a href=&quot;#3-接收多种消息类型&quot; class=&quot;headerlink&quot; title=&quot;3. 接收多种消息类型&quot;&gt;&lt;/a&gt;3. 接收多种消息类型&lt;/h3&gt;&lt;p&gt; 结合发送消息复用文字（”chat”）类型的实现方式，接收消息也要对应进行解析，其中getXHMessageFromXMPPMessage方法可以解析当前收到的消息，也可以解析从数据库中得到的历史记录消息。&lt;br&gt;关于已读和未读，本地设备可以再建一个记录消息数据库，标记已读未读红点等，同时在后台实现本地推送；服务器端需要建立离线消息推送机制；如果涉及到多设备的同步就更复杂了，本Demo不讨论已读状态的实现&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// MARK:  --------------------------------  接收消息-来自XMPP回调  -------------------------------
+   func xmppStream(sender: XMPPStream!, didReceiveMessage message: XMPPMessage!) {
+       DPrintln(&amp;quot;收到消息 \(message)&amp;quot;)
+
+       if message.isChatMessageWithBody(){
+
+           let newMessage = self.getXHMessageFromXMPPMessage(message, messageSender: message.from().full(), isUserSendMessage: false, isHistory: false)
+           //用通知的方式来触发聊天界面刷新相关UI
+           NSNotificationCenter.defaultCenter().postNotificationName(kXMPPNewMessage, object: newMessage, userInfo: nil)
+       }
+       else{
+           DPrintln(&amp;quot;收到其它类型消息/非正常消息&amp;quot;)
+           //在这里可以判断是否是消息回执，对消息回执作处理，可参考：http://blog.csdn.net/huwenfeng_2011/article/details/43459039
+           //消息回执说明文档 http://xmpp.org/extensions/xep-0184.html
+       }
+   }
+
+   /**
+    将XMPPMessage转成和UI可对应的XHMessage,(XHMessage来自MessageDisplayKit,也可以实现自己的UI模型)
+
+    - parameter message:           收到的消息
+    - parameter messageSender:     消息发送者
+    - parameter isUserSendMessage: 是否是我自己发送的消息
+    - parameter isHistory:         是否是历史记录
+
+    - returns: 返回XHMessage
+    */
+   func getXHMessageFromXMPPMessage(message: XMPPMessage, messageSender: String?, isUserSendMessage: Bool, isHistory: Bool) -&amp;gt; XHMessage {
+
+       var sender = messageSender
+       if sender == nil{
+           //发送者为空，判定为自己发出去的信息
+          sender = &amp;quot;\(_userId!)@\(vHostChat)&amp;quot;
+       }
+       let nowTime = NSDate()
+       let mediaText = message.body()
+
+       var newMessage: XHMessage
+       var messageType = XHBubbleMessageMediaType.Text
+       if let releayType = message.attributeForName(&amp;quot;releayType&amp;quot;){
+           messageType = self.getMessageTypeFromString(releayType.stringValue())
+       }
+
+       switch messageType {
+       case .Emotion:
+           newMessage = XHMessage(emotionPath: NSBundle.mainBundle().pathForResource(mediaText, ofType: nil), sender: sender, timestamp: nowTime)
+       case .LocalPosition:
+           newMessage = XHMessage(text: &amp;quot;发送了位置信息&amp;quot;, sender: sender, timestamp: nowTime)
+       case .Photo:
+           newMessage = XHMessage(photo: nil, thumbnailUrl: mediaText, originPhotoUrl: nil, sender: sender, timestamp: nowTime)
+       case .Text:
+           newMessage = XHMessage(text: mediaText, sender: sender, timestamp: nowTime)
+       case .Video:
+           newMessage = XHMessage(videoConverPhoto: nil, videoPath: nil, videoUrl: mediaText, sender: sender, timestamp: nowTime)
+       case .Voice:
+           var durantion = &amp;quot;60&amp;quot;
+           if let durantionMessage = message.attributeForName(&amp;quot;otherMessage&amp;quot;){
+               durantion = durantionMessage.stringValue()
+           }
+
+           newMessage = XHMessage(voicePath: nil, voiceUrl: mediaText, voiceDuration: durantion, sender: sender, timestamp: nowTime)
+           //当前收到的消息，通过腾讯云来下载语音（可以放到UI界面来实现）
+           //历史记录复用此方法时，通过查询Url来得到可能已存在本地的voicepath
+           let resultPath = JDTXCloudManager.shared.getFilePathFromURLString(mediaText, typeString: &amp;quot;file&amp;quot;)
+           if NSFileManager.defaultManager().fileExistsAtPath(resultPath){
+               newMessage.voicePath = resultPath
+           }
+
+       }
+       DPrintln(&amp;quot;sender = \(sender)&amp;quot;)
+       if isUserSendMessage {
+           newMessage.bubbleMessageType = .Sending         //发送消息
+       }else{
+           newMessage.bubbleMessageType = .Receiving       //接收消息
+       }
+       //未读已读推送等需定制化实现，这里简单将历史信息全部标记成已读
+       newMessage.isRead = !isHistory
+       return newMessage
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;p&gt;作者 &lt;a href=&quot;http://jamiepoet.github.io&quot;&gt;@代码书生&lt;/a&gt;&lt;br&gt;2016 年 06月 16日    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：&lt;code&gt;pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;&lt;/code&gt;&lt;br&gt;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： &lt;a href=&quot;https://www.qcloud.com/product/cos.html&quot;&gt;https://www.qcloud.com/product/cos.html&lt;/a&gt; 。整个完整的Demo会在最后一节放到个人github上。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
+    
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
+    
+      <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+  </entry>
+  
+  <entry>
     <title>基于XMPP实现即时通讯（二、登陆、上下线、接收消息）</title>
     <link href="http://jamiepoet.github.io/2016/06/17/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%BA%8C%E3%80%81%E7%99%BB%E9%99%86%E3%80%81%E4%B8%8A%E4%B8%8B%E7%BA%BF%E3%80%81%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/06/17/基于XMPP实现即时通讯（二、登陆、上下线、接收消息）/</id>
     <published>2016-06-17T01:47:57.000Z</published>
-    <updated>2016-06-17T02:49:11.000Z</updated>
+    <updated>2016-07-29T08:54:28.000Z</updated>
     
-    <content type="html">&lt;p&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+    <content type="html">&lt;p&gt;关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;一、了解XMPP常用对象&quot;&gt;&lt;a href=&quot;#一、了解XMPP常用对象&quot; class=&quot;headerlink&quot; title=&quot;一、了解XMPP常用对象&quot;&gt;&lt;/a&gt;一、了解XMPP常用对象&lt;/h2&gt;&lt;p&gt;XMPPStream：xmpp基础服务类&lt;br&gt;XMPPRoster：好友列表类&lt;br&gt;XMPPRosterCoreDataStorage：好友列表（用户账号）在core data中的操作类&lt;br&gt;XMPPvCardCoreDataStorage：好友名片（昵称，签名，性别，年龄等信息）在core data中的操作类&lt;br&gt;XMPPvCardTemp：好友名片实体类，从数据库里取出来的都是它&lt;br&gt;xmppvCardAvatarModule：好友头像&lt;br&gt;XMPPReconnect：如果失去链接,自动重连&lt;br&gt;XMPPRoom：提供多用户聊天支持&lt;br&gt;XMPPPubSub：发布订阅&lt;/p&gt;
 &lt;h2 id=&quot;二、引入头文件&quot;&gt;&lt;a href=&quot;#二、引入头文件&quot; class=&quot;headerlink&quot; title=&quot;二、引入头文件&quot;&gt;&lt;/a&gt;二、引入头文件&lt;/h2&gt;&lt;p&gt;根据&lt;a href=&quot;http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/#四、工程中集成XMPP&quot;&gt;基于XMPP实现即时通讯（一、环境搭建）&lt;/a&gt;的集成方式，cocapods引入的XMPP为OC版本，所以要在工程的桥接文件中引入基础服务类：&lt;code&gt;#import “XMPP.h&amp;quot;&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id=&quot;三、登陆&quot;&gt;&lt;a href=&quot;#三、登陆&quot; class=&quot;headerlink&quot; title=&quot;三、登陆&quot;&gt;&lt;/a&gt;三、登陆&lt;/h2&gt;&lt;p&gt;登陆之前我们得先在openfire上建个用户（也可以直接用管理员帐号），然后再进行以下步骤：初始化核心类、建立socket链接、链接成功后通过密码进行身份校验、更新上线状态。&lt;/p&gt;
 &lt;h3 id=&quot;1-新建用户&quot;&gt;&lt;a href=&quot;#1-新建用户&quot; class=&quot;headerlink&quot; title=&quot;1. 新建用户&quot;&gt;&lt;/a&gt;1. 新建用户&lt;/h3&gt;&lt;p&gt;用管理员帐号登录openfire,在用户/组中新建用户。（实际业务流程中，此建立过程也是后台服务器实现，只是需要客户端传递相关注册信息）&lt;/p&gt;
 &lt;h3 id=&quot;2-初始化基础类&quot;&gt;&lt;a href=&quot;#2-初始化基础类&quot; class=&quot;headerlink&quot; title=&quot;2. 初始化基础类&quot;&gt;&lt;/a&gt;2. 初始化基础类&lt;/h3&gt;&lt;p&gt;可以新建一个XMPPManager类，以下方法均在此类实现。（用来管理所有XMPP核心业务服务）：&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;func xmppInit()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream = XMPPStream()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream?.addDelegate(self, delegateQueue: dispatch_get_main_queue())&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;h3 id=&quot;3-建立socket链接&quot;&gt;&lt;a href=&quot;#3-建立socket链接&quot; class=&quot;headerlink&quot; title=&quot;3. 建立socket链接&quot;&gt;&lt;/a&gt;3. 建立socket链接&lt;/h3&gt;&lt;p&gt;3.1 先在文件头申明常量：&lt;br&gt;因为是在个人MAC搭建Openfire服务器调试，所以此hostname为个人MAC共享访问地址，在mac的系统偏好设置-&amp;gt;共享里可以查看到完整地址&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;let vHostName = &amp;quot;JamieiMac.local&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&quot;3-建立socket链接&quot;&gt;&lt;a href=&quot;#3-建立socket链接&quot; class=&quot;headerlink&quot; title=&quot;3. 建立socket链接&quot;&gt;&lt;/a&gt;3. 建立socket链接&lt;/h3&gt;&lt;p&gt;3.1 先在文件头申明常量：&lt;br&gt;因为是在个人MAC搭建Openfire服务器调试，所以此hostname为个人MAC共享访问地址，在mac的系统偏好设置-&amp;gt;共享里可以查看到完整地址，在实际调试过程中，真机登录必须用此host,但聊天可能为localhost,也可能为此host，模拟器也存在同样的情况，当消息发送不成功时，可以尝试修改这些host&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;let vHostName = &amp;quot;JamieiMac.local&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;3.2 建立socket链接：&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;func xmppConnect(userId: String, password: String) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    let userName = &amp;quot;\(userId)@\(vHostName)&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    let jid = XMPPJID.jidWithString(userName)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream.myJID = jid&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream.hostName = vHostName&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _pwd = password&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    do &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        try _xmppStream.connectWithTimeout(10)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; catch let error &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        DPrintln(&amp;quot;发送链接请求失败 \(error),请检查网络或服务器配置&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; // MARK:  --------------------------------  链接回调  -------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStream(sender: XMPPStream!, socketDidConnect socket: GCDAsyncSocket!) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;建立socket链接&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStreamDidConnect(sender: XMPPStream!) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;链接成功&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    //进行身份校验&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    self.authenticateUser()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStreamConnectDidTimeout(sender: XMPPStream!)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;链接超时&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Tools.shared.showAlertViewAndDismissDefault(nil, message: &amp;quot;链接超时，请重试&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;3.3 校验身份&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;func authenticateUser() &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    do &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        try _xmppStream.authenticateWithPassword(_pwd)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; catch let error &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        DPrintln(&amp;quot;发送验证请求失败 \(error)&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _xmppStream?.disconnect()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;// MARK:  --------------------------------  身份验证回调  -------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStreamDidAuthenticate(sender: XMPPStream!)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;身份验证成功&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Tools.shared.showAlertViewAndDismissDefault(nil, message: &amp;quot;登录成功!&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    self.onLine()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStream(sender: XMPPStream!, didNotAuthenticate error: DDXMLElement!) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;身份验证失败&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Tools.shared.showAlertViewAndDismissDefault(&amp;quot;登录失败&amp;quot;, message: &amp;quot;请确认您的用户名和密码&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     _xmppStream?.disconnect()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;3.3 校验身份&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;func authenticateUser() &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    if _xmppStream.isAuthenticated()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        return&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    do &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        try _xmppStream.authenticateWithPassword(_pwd)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; catch let error &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Tools.dissmissLoadingInWindow()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        DPrintln(&amp;quot;发送验证请求失败 \(error)&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _xmppStream.disconnect()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;// MARK:  --------------------------------  身份验证回调  -------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStreamDidAuthenticate(sender: XMPPStream!)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        DPrintln(&amp;quot;身份验证成功&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;//        Tools.shared.showAlertViewAndDismissDefault(nil, message: &amp;quot;登录成功!&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        self.onLine()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Tools.dissmissLoadingInWindow()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        NSNotificationCenter.defaultCenter().postNotificationName(&amp;quot;loginSuccess&amp;quot;, object: nil, userInfo: nil)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func xmppStream(sender: XMPPStream!, didNotAuthenticate error: DDXMLElement!) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;身份验证失败&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Tools.dissmissLoadingInWindow()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        NSNotificationCenter.defaultCenter().postNotificationName(&amp;quot;loginError&amp;quot;, object: nil, userInfo: nil)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;         _xmppStream.disconnect()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;h2 id=&quot;四、上下线&quot;&gt;&lt;a href=&quot;#四、上下线&quot; class=&quot;headerlink&quot; title=&quot;四、上下线&quot;&gt;&lt;/a&gt;四、上下线&lt;/h2&gt;&lt;p&gt;用户默认状态有：&lt;/p&gt;
 &lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;available 上线&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;away 离开&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;do not disturb 忙碌&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;unavailable 下线&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;默认身份验证成功后，用户还是灰色（下线状态）的，因此通常登陆成功后直接发送上线状态。上线成功后在openfire的用户摘要中可看到在线状态变绿。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;func onLine()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;发送上线状态&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    let presence = XMPPPresence(type: &amp;quot;available&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream.sendElement(presence)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;//用户主动下线(同时断开链接)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;func outLine()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DPrintln(&amp;quot;发送下线状态&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    let presence = XMPPPresence(type: &amp;quot;unavailable&amp;quot;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream.sendElement(presence)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    //断开链接&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _xmppStream.disconnect()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
@@ -47,7 +417,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1&lt;br&gt;
+      &lt;p&gt;关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;br&gt;
     
     </summary>
     
