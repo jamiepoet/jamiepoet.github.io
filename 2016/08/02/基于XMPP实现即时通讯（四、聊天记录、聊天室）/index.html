@@ -1,0 +1,1174 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,Mac,XMPP,IM," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="代码书生" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于XMPP实现即时通讯（四、聊天记录、聊天室）">
+<meta property="og:url" content="http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/index.html">
+<meta property="og:site_name" content="代码书生">
+<meta property="og:description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
+<meta property="og:updated_time" content="2016-08-02T06:08:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于XMPP实现即时通讯（四、聊天记录、聊天室）">
+<meta name="twitter:description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 基于XMPP实现即时通讯（四、聊天记录、聊天室） | 代码书生 </title>
+<!--   add by jamie 20160603 -->
+<!--   <script type="text/javascript" src="http://tajs.qq.com/stats?sId=56609733" charset="UTF-8"></script> -->
+<!--    -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=56609733";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">代码书生</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">碧海琼涛连天涯，快意心波逐浪花</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                基于XMPP实现即时通讯（四、聊天记录、聊天室）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-02T14:01:25+08:00" content="2016-08-02">
+              2016-08-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/即时通讯（IM）/" itemprop="url" rel="index">
+                    <span itemprop="name">即时通讯（IM）</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/" class="leancloud_visitors" data-flag-title="基于XMPP实现即时通讯（四、聊天记录、聊天室）">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。<br><a id="more"></a></p>
+<h2 id="一、聊天记录"><a href="#一、聊天记录" class="headerlink" title="一、聊天记录"></a>一、聊天记录</h2><p>XMPP默认通过coredata存储聊天记录，先初始化并进行激活</p>
+<pre><code>//消息相关
+var _xmppMessageArchinving: XMPPMessageArchiving!
+var _xmppMessageStorage: XMPPMessageArchivingCoreDataStorage!
+</code></pre><p>在activeXMPPModules方法中激活模块：</p>
+<pre><code>//消息相关
+_xmppMessageStorage = XMPPMessageArchivingCoreDataStorage()
+_xmppMessageArchinving = XMPPMessageArchiving(messageArchivingStorage: _xmppMessageStorage)
+_xmppMessageArchinving.clientSideMessageArchivingOnly = true
+//激活&amp;添加代理
+_xmppMessageArchinving.activate(_xmppStream)
+_xmppMessageArchinving.addDelegate(self, delegateQueue: dispatch_get_main_queue())
+</code></pre><p>功能实现，可以根据聊天界面下拉刷新的具体逻辑来实现一次获取多少条，或者是消息管理中心的全部记录，这里一次性获取全部聊天记录，不考虑数据量超大的情况：</p>
+<pre><code>  /**
+     获取聊天记录
+
+ - parameter userID:              如果为空，就是本地所有好友全部的聊天记录，这里friendid也可以为房间id,因为我们的房间信息发送走的也是正常聊天的_xmppMessageStorage存储
+ - parameter getMessageListBlock: 回调
+ */
+func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageListBlock) {
+
+    //如果是房间聊天，也可以从_xmppRoomStorage中获取数据库（xmppRoomStorage可以初始化为内存中的群消息对象，或者单独为群创建的coredata）
+    let context = _xmppMessageStorage.mainThreadManagedObjectContext
+    let entity = NSEntityDescription.entityForName(&quot;XMPPMessageArchiving_Message_CoreDataObject&quot;, inManagedObjectContext: context)
+
+    let request = NSFetchRequest()
+    request.entity = entity
+
+    //全部查询出来
+    //request.fetchLimit = 50         //一次最多查询50
+
+    if friendId != nil{
+        // 过滤内容，只找我与正要聊天的好友的聊天记录mina@localhost
+        let friendJidString = self.getChatJidString(friendId!)
+
+        //            let jidstring = &quot;\(_userId!)@\(vHostChat)&quot;
+        //            let predicate = NSPredicate(format: &quot;(bareJidStr like %@) &amp;&amp; (streamBareJidStr like %@)&quot;,userId!.lowercaseString, _userId!.lowercaseString)
+
+        let predicate = NSPredicate(format: &quot;bareJidStr = %@&quot;, friendJidString)
+        request.predicate = predicate
+    }
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+
+        var results: [XMPPMessageArchiving_Message_CoreDataObject]?
+        do {
+            try results = context.executeFetchRequest(request) as? [XMPPMessageArchiving_Message_CoreDataObject]
+        } catch let error as NSError {
+            dispatch_async(dispatch_get_main_queue(), {
+                return getMessageListBlock(messageList: nil, faildMsg: error.description)
+            })
+        }
+        if (results != nil) &amp;&amp; (results?.count != 0){
+            var array = [XHMessage]()
+            for object in results! {
+
+                let oldMessage = self.getXHMessageFromXMPPMessage(object.message, messageSender: object.bareJidStr, isUserSendMessage: object.outgoing.intValue == 1 ? true : false, isHistory: true)
+
+                if oldMessage.messageMediaType == XHBubbleMessageMediaType.Voice &amp;&amp; oldMessage.voicePath == nil{
+                    //语音没有从本地读到
+                    //尝试在子线程去下载，下次拉记录时可以刷新出来，这次不再显示----也可以自己控制异步加载显示
+                    JDTXCloudManager.shared.downloadFile(oldMessage.voiceUrl, sign: kTXCloud_File_Secret_ManyTime, sucessResult: nil, faildMsg: nil)
+                    continue
+                }
+
+                oldMessage.avatar = UIImage(named: &quot;_App_Icons&quot;)
+                oldMessage.avatarUrl = &quot;http://lorempixel.com/400/200/&quot;
+                array.append(oldMessage)
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                return getMessageListBlock(messageList: array, faildMsg: nil)
+            })
+        }
+        dispatch_async(dispatch_get_main_queue(), {
+            return getMessageListBlock(messageList: nil, faildMsg: nil)
+        })
+    }
+}
+</code></pre><h2 id="二、聊天室"><a href="#二、聊天室" class="headerlink" title="二、聊天室"></a>二、聊天室</h2><p>聊天室也就是群聊，不过有一些业务权限上的区别，XMPP里面的聊天室是比较传统的聊天室业务，权限有：</p>
+<pre><code>拥有者 owner
+管理员：admin 
+成员：member  
+黑名单：outcast  
+游客：none（默认被邀请者为游客）
+</code></pre><p>创建房间的人，默认就会成为owner，当owner邀请新用户加入房间时，如果不指定角色，默认为游客<br>房间拥有者可以改变房间配置、授予用户所有权和管理权限以及毁掉此房间。房间管理员可以禁止或授予用户权限和新的管理员权限。房间成员仅能允许用户加入房间（如果该房间配置为仅对成员开放）。同时房间被排除者是已禁止进入该房间的用户。XMPP中所说的主持人角色包括owner和admin，详见<a href="http://xmpp.org/extensions/xep-0045.html#associations" target="_blank" rel="external">http://xmpp.org/extensions/xep-0045.html#associations</a><br>以上角色通过邀请时指定Affiliation来实现，如设置被邀请者的Affiliation为member表示给此被邀请用户成员角色<br>注意：只有owner和admin才有查询房间所有角色名单的权限，所以根据需求这里我们给被邀请者admin权限, 所有人都是主持人，但只有拥有者才可以销毁房间</p>
+<p>为了使Demo简单明了，我们的业务逻辑是只允许用户在一个聊天室内聊天，要进入一个新的聊天室必须先离开原房间或销毁原房间。</p>
+<h3 id="1-初始化"><a href="#1-初始化" class="headerlink" title="1. 初始化"></a>1. 初始化</h3><p>先初始化并进行激活：</p>
+<pre><code>var _xmppRoom: XMPPRoom?                                    //自己当前创建的聊天室
+var _xmppRoomJid: XMPPJID?                                  //房间jid
+var _xmppRoomOwnerMe = false                                //此房间是否是我创建的
+var _xmppRoomStorage = XMPPRoomMemoryStorage()              //聊天室信息存储，只是放到内存中，也可根据业务情况用coredata方式的对象存储,如XMPPRoomCoreDataStorage
+var _createChatRoomBlock: JDXMPP_CreateChatRoomBlock?       //创建房间回调
+var _getChatRoomModeratorsBlock: JDXMPP_GetChatRoomModeratorsBlock? //获取房间主持人列表
+var _xmppRoomCreateSuccess = false                          //房间创建成功
+var _inChatRoom = false                                     //是否已经在聊天室内，因为本demo要确保同一时间只能在一个聊天室聊天
+
+var _xmppMuc: XMPPMUC!                                      //房间邀请等数据对象
+</code></pre><p>在activeXMPPModules方法中激活模块：</p>
+<pre><code>//聊天室相关
+_xmppMuc = XMPPMUC()
+_xmppStream.registerModule(_xmppMuc)
+_xmppMuc.activate(_xmppStream)
+_xmppMuc.addDelegate(self, delegateQueue: dispatch_get_main_queue())
+</code></pre><p>声明房间对应的host,注意必须带”conference”（可以在Openfire控制台群组聊天中查看到对应域名）:</p>
+<pre><code>let vHostRoom = &quot;conference.JamieiMac.local&quot;  
+</code></pre><h3 id="2-创建、加入、邀请加入聊天室"><a href="#2-创建、加入、邀请加入聊天室" class="headerlink" title="2. 创建、加入、邀请加入聊天室"></a>2. 创建、加入、邀请加入聊天室</h3><p>注意：经过调试，创建房间方法调用后需要立即调用让自己肯定加入房间的方法，这样才能收到房间建立成功的回调，可能的原因是：默认自己肯定要加入房间，同时要加入房间才能收到房间建立成功的回调。<br>同时：当自己加入别人创建的房间时，也不会回调房间创建成功的方法，只会回调加入房间成功</p>
+<pre><code> /**
+     创建聊天室，并且直接加入此聊天室
+ - parameter roomID:              聊天室ID，可以自己创建，也可根据需求向服务器申请
+ - parameter ownerMe:             是否是自己创建的房间，他人邀请我加入房间时，我也要生成对应的房间对象
+ - parameter createChatRoomBlock: 创建完房间的回调
+ */
+func createChatRoom(roomID: String, ownerMe: Bool, createChatRoomBlock: JDXMPP_CreateChatRoomBlock) {
+
+    let roomJid = XMPPJID.jidWithString(&quot;\(roomID)@\(vHostRoom)&quot;)
+
+    _xmppRoomOwnerMe = ownerMe
+    if _xmppRoom != nil &amp;&amp; _xmppRoom?.roomJID.user == roomJid.user &amp;&amp; _xmppRoomCreateSuccess == true {
+        //已经创建过了的房间
+        createChatRoomBlock(isSuccess: true, faildMsg: nil)
+        return
+    }
+
+    _xmppRoomCreateSuccess = false
+    _createChatRoomBlock = nil
+    _createChatRoomBlock = createChatRoomBlock
+
+    _xmppRoom = XMPPRoom(roomStorage: _xmppRoomStorage, jid: roomJid, dispatchQueue: dispatch_get_main_queue())
+
+    _xmppRoom?.activate(_xmppStream)
+    _xmppRoom?.addDelegate(self, delegateQueue: dispatch_get_main_queue())
+
+    //默认自己肯定要加入房间，同时要加入房间才能收到房间建立成功的回调
+    self.joinNowChatRoom(_userId!)
+}
+
+/**
+ 加入聊天室
+ - parameter nickName: 聊天室内的个人昵称
+ */
+func joinNowChatRoom(nickName: String) {
+    _xmppRoom!.joinRoomUsingNickname(nickName, history: nil)
+}
+
+  /**
+ 邀请新人进入聊天室
+ - parameter friendId: 好友ID（通常只能邀请自己的好友）
+ */
+func inviteUserToChatRoom(friendId: String) {
+    let friendJidString = self.getChatJidString(friendId)
+    let friendJID = XMPPJID.jidWithString(friendJidString)
+    _xmppRoom!.inviteUser(friendJID, withMessage: &quot;\(_userId!)邀请您加入群&quot;)
+    //只有owner和admin才有查询房间所有角色名单的权限，所以根据需求这里我们给被邀请者admin权限, 这样所有人都是主持人，但只有拥有者才可以销毁房间
+    _xmppRoom!.editRoomPrivileges([XMPPRoom.itemWithAffiliation(&quot;admin&quot;, jid: friendJID)])
+}
+</code></pre><p>对应回调：</p>
+<pre><code>func xmppRoomDidCreate(sender: XMPPRoom!) {
+
+       DPrintln(&quot;房间创建成功 \(sender)&quot;)
+
+       //设置房间默认配置属性
+       _xmppRoom!.configureRoomUsingOptions(nil)
+
+
+       _xmppRoomCreateSuccess = true
+       if _createChatRoomBlock != nil{
+           _createChatRoomBlock!(isSuccess: true, faildMsg: nil)
+           _createChatRoomBlock = nil
+       }
+   }
+
+   func xmppRoomDidJoin(sender: XMPPRoom!) {
+       DPrintln(&quot;加入房间成功\(sender)&quot;)
+
+       _inChatRoom = true
+
+       //当加入已创建聊天室时，不会回调xmppRoomDidCreate，所以在此进行回调处理
+       _xmppRoomCreateSuccess = true
+       if _createChatRoomBlock != nil{
+           _createChatRoomBlock!(isSuccess: true, faildMsg: nil)
+           _createChatRoomBlock = nil
+       }
+   }
+</code></pre><h3 id="3-查询聊天室相关信息"><a href="#3-查询聊天室相关信息" class="headerlink" title="3. 查询聊天室相关信息"></a>3. 查询聊天室相关信息</h3><p>可以根据需求在加入聊天室成功后调用以下方法，但要注意，刚加入时去查询有可能会返回来空数组，这时可以尝试延时几秒去请求查询</p>
+<pre><code>_xmppRoom.fetchConfigurationForm    //查询聊天室配置
+_xmppRoom.fetchBanList              //查询聊天室黑名单角色清单
+_xmppRoom.fetchMembersList          //查询聊天室成员角色清单
+_xmppRoom.fetchModeratorsList       //查询聊天室主持人角色清单
+</code></pre><p>对应以下回调：</p>
+<pre><code>// MARK:  --------------------------------  聊天室回调 -- 信息查询  -------------------------------
+func xmppRoom(sender: XMPPRoom!, didFetchBanList items: [AnyObject]!) {
+    DPrintln(&quot;收到本群/房间 禁止人员 名单 \(items)&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, didFetchMembersList items: [AnyObject]!) {
+    DPrintln(&quot;收到本群/房间 所有成员角色名单 \(items)&quot;)
+
+}
+
+func xmppRoom(sender: XMPPRoom!, didFetchConfigurationForm configForm: DDXMLElement!) {
+    DPrintln(&quot;获取到了聊天室配置属性\(configForm)&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, didFetchModeratorsList items: [AnyObject]!) {
+    DPrintln(&quot;收到本群/房间 主持人员/管理人员  名单 \(items)&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, didNotFetchBanList iqError: XMPPIQ!) {
+    DPrintln(&quot;查询失败，无法收到本群/房间 禁止人员 名单&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, didNotFetchMembersList iqError: XMPPIQ!) {
+    DPrintln(&quot;查询失败，无法收到本群/房间 所有人员 名单&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, didNotFetchModeratorsList iqError: XMPPIQ!) {
+    DPrintln(&quot;查询失败，无法收到本群/房间 主持人员/管理人员  名单&quot;)
+}
+</code></pre><p>还有其它设置聊天室配置是否成功等相关回调，可以根据需求添加。<br>加入聊天室成功后，也可以从本地数据库中查询聊天室人员信息，本Demo采用的是此方法：</p>
+<pre><code>/**
+ 获取群内所有人的userid清单（即jid的user）
+ */
+func getRoomAllOccupantsList() -&gt; [String]? {
+    if _xmppRoomStorage.occupants() == nil{
+        return nil
+    }
+    var idArray = [String]()
+    for occupantStorageObject in _xmppRoomStorage.occupants(){
+        let jidString = occupantStorageObject.realJID().user
+        idArray.append(jidString)
+    }
+    return idArray
+}
+</code></pre><h3 id="4-收到邀请、离开、销毁聊天室"><a href="#4-收到邀请、离开、销毁聊天室" class="headerlink" title="4. 收到邀请、离开、销毁聊天室"></a>4. 收到邀请、离开、销毁聊天室</h3><p>聊天室邀请来自XMPPMUCDelegate的回调：</p>
+<pre><code>func xmppMUC(sender: XMPPMUC!, roomJID: XMPPJID!, didReceiveInvitation message: XMPPMessage!) {
+        DPrintln(&quot;收到聊天室邀请&quot;)
+
+        let roomName = message.attributeForName(&quot;from&quot;).stringValue()
+        let x = message.elementForName(&quot;x&quot;) as DDXMLElement
+        let invite = x.elementForName(&quot;invite&quot;)
+        let fromUser = invite.attributeForName(&quot;from&quot;).stringValue()
+        let reason = invite.elementForName(&quot;reason&quot;).stringValue()
+
+        _xmppRoomJid = roomJID  //记录要进入的房间id
+        let alert = UIAlertView(title: &quot;来自\(fromUser)的聊天室邀请&quot;, message: &quot;\(reason)，是否加入\(roomName)?&quot;, delegate: self, cancelButtonTitle: &quot;拒绝&quot;, otherButtonTitles: &quot;加入&quot;)
+        alert.tag = vJoinGroupAlertTag
+        alert.show()
+ }
+</code></pre><p>然后在<a href="http://jamiepoet.github.io/2016/07/29/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%B8%89%E3%80%81%E5%A2%9E%E5%88%A0%E5%A5%BD%E5%8F%8B%E3%80%81%E5%A5%BD%E5%8F%8B%E5%88%97%E8%A1%A8%E3%80%81%E5%8F%91%E9%80%81%E5%90%84%E7%A7%8D%E6%B6%88%E6%81%AF%EF%BC%89/#3-%E5%A2%9E%E5%88%A0%E5%A5%BD%E5%8F%8B%E7%9A%84%E7%9B%B8%E5%85%B3%E5%9B%9E%E8%B0%83">UIAlertView delegate</a>中添加以下内容</p>
+<pre><code>...
+ else if alertView.tag == vJoinGroupAlertTag{
+            if buttonIndex == 1{
+                DPrintln(&quot;同意加入群&quot;)
+                if _inChatRoom == true &amp;&amp; _xmppRoom != nil{
+                    //或者此处让用户选择直接退出当前房间的逻辑也可
+                    Tools.shared.showAlertViewAndDismissDefault(&quot;请先退出当前房间&quot;, message: &quot;同一时刻你只能加入一个房间&quot;)
+                    return
+                }
+
+                weak var weakSelf = self
+                //创建此群对象及相关代理
+                self.createChatRoom(_xmppRoomJid!.user, ownerMe: false, createChatRoomBlock: { (isSuccess, faildMsg) in
+                    dispatch_async(dispatch_get_main_queue(), {
+
+                        if isSuccess{
+                           //以通知的方式将房间完整jid传给对应的界面去跳转或刷新UI
+                          //需要群人员清单时通过上面的getRoomAllOccupantsList()方法获取 NSNotificationCenter.defaultCenter().postNotificationName(&quot;joinChatRoom&quot;, object: weakSelf!._xmppRoomJid!.bareJID().full(), userInfo: nil)
+                        }
+                    })
+                })
+            }else{
+                DPrintln(&quot;&quot;)
+            }
+        }
+    ...
+</code></pre><p>离开、销毁聊天室：</p>
+<pre><code> /**
+     离开当前房间
+     */
+func levaRoom() {
+
+    if _xmppRoom != nil{
+        //如果是自己创建的房间，直接销毁此房间
+        if _xmppRoomOwnerMe{
+            _xmppRoom?.destroyRoom()
+
+        }
+        else{
+            _xmppRoom!.leaveRoom()
+        }
+        _inChatRoom = false
+    }
+}
+</code></pre><p>对应相关的回调：</p>
+<pre><code>func xmppRoomDidLeave(sender: XMPPRoom!) {
+    DPrintln(&quot;退出房间成功\(sender)&quot;)
+    _xmppRoom = nil
+}
+
+func xmppRoomDidDestroy(sender: XMPPRoom!) {
+    DPrintln(&quot;房间已经销毁\(sender)&quot;)
+    _xmppRoom = nil
+}
+
+func xmppRoom(sender: XMPPRoom!, occupantDidJoin occupantJID: XMPPJID!, withPresence presence: XMPPPresence!) {
+    DPrintln(&quot;有新人加入房间\(occupantJID)&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, occupantDidLeave occupantJID: XMPPJID!, withPresence presence: XMPPPresence!) {
+    DPrintln(&quot;有新人离开房间\(occupantJID)&quot;)
+}
+
+func xmppRoom(sender: XMPPRoom!, occupantDidUpdate occupantJID: XMPPJID!, withPresence presence: XMPPPresence!) {
+    DPrintln(&quot;房间有人更新了个人状态\(occupantJID)&quot;)
+}
+</code></pre><h3 id="5-聊天室消息"><a href="#5-聊天室消息" class="headerlink" title="5. 聊天室消息"></a>5. 聊天室消息</h3><p>聊天室发送消息和 <a href="http://jamiepoet.github.io/2016/07/29/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%B8%89%E3%80%81%E5%A2%9E%E5%88%A0%E5%A5%BD%E5%8F%8B%E3%80%81%E5%A5%BD%E5%8F%8B%E5%88%97%E8%A1%A8%E3%80%81%E5%8F%91%E9%80%81%E5%90%84%E7%A7%8D%E6%B6%88%E6%81%AF%EF%BC%89/#1-%E5%8F%91%E9%80%81">1对1聊天发送消息</a> 调用方法相同，只是发出的Jid为房间id<br>聊天室消息接收如下：</p>
+<pre><code>// MARK:  --------------------------------  聊天室回调 -- 收到信息  -------------------------------
+func xmppRoom(sender: XMPPRoom!, didReceiveMessage message: XMPPMessage!, fromOccupant occupantJID: XMPPJID!) {
+    DPrintln(&quot;收到信息, 来自房间 \(sender), 内容：\(message) ）&quot;)
+
+    let messageString = message.stringValue()
+
+    //群聊时要将自己的信息排除，因为发出去的信息还会回传给自己
+    let fromID = occupantJID.full().lastPathComponent
+    if !messageString.isEmpty &amp;&amp; fromID != _userId{
+
+        let newMessage = self.getXHMessageFromXMPPMessage(message, messageSender: message.from().full(), isUserSendMessage: false, isHistory: false)
+        //同1对1接收消息一样，走同样的通知
+        NSNotificationCenter.defaultCenter().postNotificationName(kXMPPNewMessage, object: newMessage, userInfo: nil)
+    }
+    else{
+        DPrintln(&quot;收到其它类型消息/非正常消息/回执等&quot;)
+    }
+}
+</code></pre><p>聊天室消息记录和1对1获取消息记录一样，查询的Jid为房间iD即可，也可能通过_xmppRoomStorage去从内存或单独的群数据库中读取。</p>
+<p>好了，整个XMPP的内容都学习了一次，剩下注册、查询房间列表等小的功能点，大家自己实现哈，有问题也可以找我交流学习哈，下章会将Demo给出。</p>
+<hr>
+<p>作者 <a href="http://jamiepoet.github.io">@代码书生</a><br>2016 年 08月 02日    </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/pay.png" alt="代码书生 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/Mac/" rel="tag">#Mac</a>
+          
+            <a href="/tags/XMPP/" rel="tag">#XMPP</a>
+          
+            <a href="/tags/IM/" rel="tag">#IM</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/" rel="next" title="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）">
+                <i class="fa fa-chevron-left"></i> 基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/"
+     data-title="基于XMPP实现即时通讯（四、聊天记录、聊天室）"
+     data-content=""
+     data-url="http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/"
+           data-title="基于XMPP实现即时通讯（四、聊天记录、聊天室）" data-url="http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/jamiepoet.jpg"
+               alt="代码书生" />
+          <p class="site-author-name" itemprop="name">代码书生</p>
+          <p class="site-description motion-element" itemprop="description">代码书生的个人博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Jamie-Ling-iOS" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1896300067/profile?rightmod=1&wvr=6&mod=personinfo&is_all=1" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jamiepoet.github.io/404.html" title="公益404" target="_blank">公益404</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、聊天记录"><span class="nav-number">1.</span> <span class="nav-text">一、聊天记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、聊天室"><span class="nav-number">2.</span> <span class="nav-text">二、聊天室</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-初始化"><span class="nav-number">2.1.</span> <span class="nav-text">1. 初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建、加入、邀请加入聊天室"><span class="nav-number">2.2.</span> <span class="nav-text">2. 创建、加入、邀请加入聊天室</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-查询聊天室相关信息"><span class="nav-number">2.3.</span> <span class="nav-text">3. 查询聊天室相关信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-收到邀请、离开、销毁聊天室"><span class="nav-number">2.4.</span> <span class="nav-text">4. 收到邀请、离开、销毁聊天室</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-聊天室消息"><span class="nav-number">2.5.</span> <span class="nav-text">5. 聊天室消息</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">代码书生</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="look-info">
+<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+<div class="user-info">
+<span id="busuanzi_container_site_pv">您是第<span id="busuanzi_value_site_uv"></span>位访客</span>
+</div>
+
+        
+
+        
+      </div>
+
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jamiepoet"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("9G9Lx2fjhFIkB76DdrMP4n1e-gzGzoHsz", "ApLHLGKCjzerjBtl3tn2y1S0");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/index.html">
 <meta property="og:site_name" content="代码书生">
 <meta property="og:description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
-<meta property="og:updated_time" content="2016-07-29T09:03:09.000Z">
+<meta property="og:updated_time" content="2016-08-02T05:59:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）">
 <meta name="twitter:description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
@@ -331,7 +331,7 @@
 
       
         <p>在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：<code>pod &quot;MessageDisplayKit&quot;, pod &quot;XHPopMenu&quot;</code><br>同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： <a href="https://www.qcloud.com/product/cos.html" target="_blank" rel="external">https://www.qcloud.com/product/cos.html</a> 。整个完整的Demo会在最后一节放到个人github上。<br><a id="more"></a></p>
-<h2 id="一、增删好友"><a href="#一、增删好友" class="headerlink" title="一、增删好友"></a>一、增删好友</h2><p>首先了解一下XMPP的通信有三种方式：message、presence和iq，主要内容和区别可以看下：<a href="http://my.oschina.net/greki/blog/272867" target="_blank" rel="external">http://my.oschina.net/greki/blog/272867</a> 简单了解下。<br>然后需要知道好友相关请求使用的是presence, 它有以下几种type：</p>
+<h2 id="一、增删好友"><a href="#一、增删好友" class="headerlink" title="一、增删好友"></a>一、增删好友</h2><p>首先了解一下XMPP的通信有三种方式：message、presence和iq，主要内容和区别可以看下：<a href="http://my.oschina.net/greki/blog/272867，简单了解下。" target="_blank" rel="external">http://my.oschina.net/greki/blog/272867，简单了解下。</a><br>然后需要知道好友相关请求使用的是presence, 它有以下几种type：</p>
 <pre><code>available: 表示处于在线状态(通知好友在线)
 unavailable: 表示处于离线状态（通知好友下线）
 subscribe: 表示发出添加好友的申请（添加好友请求）
@@ -480,11 +480,26 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
             }
 
         default:
-            DPrintln(&quot;subscription = \(subscription)）&quot;)
-        }
+                DPrintln(&quot;subscription = \(subscription)）&quot;)
+            }
+}
 
+  // MARK:  ---------------- UIAlertView delegate -----------------
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+
+        DPrintln(&quot;check index = \(buttonIndex)&quot;)
+        if alertView.tag == vAddFriendAlertTag{
+        if buttonIndex == 1{
+            DPrintln(&quot;同意添加好友&quot;)
+            _xmppRoster.acceptPresenceSubscriptionRequestFrom(_addMeJid!, andAddToRoster: true)
+            _addMeJid = nil
+        }else{
+            Println(&quot;拒接好友申请&quot;)
+            _xmppRoster.rejectPresenceSubscriptionRequestFrom(_addMeJid!)
+            _addMeJid = nil
+        }
     }
-</code></pre><h2 id="二、好友列表"><a href="#二、好友列表" class="headerlink" title="二、好友列表"></a>二、好友列表</h2><p>好友列表可以从服务器获取，也可以在本地XMPP默认数据库中获取（XMPPRosterCoreDataStorage.sharedInstance() 中），通常用后者方式，设置代理后可自动监听好友信息的更新</p>
+</code></pre><h2 id="二、好友列表"><a href="#二、好友列表" class="headerlink" title="二、好友列表"></a>二、好友列表</h2><p>好友列表可以从服务器获取，也可以在本地XMPP默认数据库中获取（XMPPRosterCoreDataStorage.sharedInstance() 中），通常用后者实现，设置代理后可自动监听好友状态的更新</p>
 <pre><code>//好友列表-//好友搜索结果控制器
        func getFriendList(sucessResult: (NSFetchedResultsController -&gt; Void)?, faildMsg: (String? -&gt; Void)?){
 
@@ -671,7 +686,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
        return newMessage
    }
 </code></pre><hr>
-<p>作者 <a href="http://jamiepoet.github.io">@代码书生</a><br>2016 年 06月 16日    </p>
+<p>作者 <a href="http://jamiepoet.github.io">@代码书生</a><br>2016 年 07月 29日    </p>
 
       
     </div>
@@ -731,6 +746,10 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/" rel="prev" title="基于XMPP实现即时通讯（四、聊天记录、聊天室）">
+                基于XMPP实现即时通讯（四、聊天记录、聊天室） <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -821,7 +840,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
