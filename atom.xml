@@ -35,13 +35,13 @@
       <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
     
     
-      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
-    
-      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
       <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
     
       <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
@@ -399,13 +399,13 @@ func xmppRoom(sender: XMPPRoom!, didReceiveMessage message: XMPPMessage!, fromOc
       <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
     
     
-      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
-    
-      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
       <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
     
       <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
@@ -784,13 +784,13 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
       <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
     
     
-      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
-    
-      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
       <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
     
       <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
@@ -833,13 +833,13 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
       <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
     
     
-      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
-    
-      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
       <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
     
       <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
@@ -882,13 +882,13 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
       <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
     
     
-      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
-    
-      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
       <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
     
       <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
     
   </entry>
   
@@ -933,11 +933,11 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
-    
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
       <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
     
@@ -1102,11 +1102,11 @@ hexo server
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
-    
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
   </entry>
   
@@ -1147,11 +1147,11 @@ sudo chmod 777 gas-preprocessor.pl
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
-    
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
   </entry>
   
