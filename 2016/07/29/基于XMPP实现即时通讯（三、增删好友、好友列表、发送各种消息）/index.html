@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/index.html">
 <meta property="og:site_name" content="代码书生">
 <meta property="og:description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
-<meta property="og:updated_time" content="2016-08-02T05:59:38.000Z">
+<meta property="og:updated_time" content="2016-08-03T07:31:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）">
 <meta name="twitter:description" content="在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： https://www.qcloud.com/product/cos.html 。整个完整的De">
@@ -362,7 +362,7 @@ var _xmppRosterStorage = XMPPRosterCoreDataStorage.sharedInstance()     //花名
  - parameter userId:         好友id
  - parameter addFriendBlock: 添加好友请求的结果回调（并非好友回复的结果，只是请求是否发送成功的回调）
  */
-func addFriend(friendId: String, addFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+func addFriend(friendId: String, addFriendBlock: LGXMPP_AddOrDeleteFriendRequestBlock?) {
 
     let friendJidString = self.getChatJidString(friendId)
     //先判断是不是添加了自己
@@ -387,7 +387,7 @@ func addFriend(friendId: String, addFriendBlock: JDXMPP_AddOrDeleteFriendRequest
     _addFriendBlock = addFriendBlock
     _xmppRoster.subscribePresenceToUser(userJID)
 }
-</code></pre><h3 id="2-删除好友"><a href="#2-删除好友" class="headerlink" title="2. 删除好友"></a>2. 删除好友</h3><pre><code>func deleteFriend(friendJid: XMPPJID, deleteFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+</code></pre><h3 id="2-删除好友"><a href="#2-删除好友" class="headerlink" title="2. 删除好友"></a>2. 删除好友</h3><pre><code>func deleteFriend(friendJid: XMPPJID, deleteFriendBlock: LGXMPP_AddOrDeleteFriendRequestBlock?) {
     _deleteFriendBlock = deleteFriendBlock
     _xmppRoster.removeUser(friendJid)
 }
@@ -565,7 +565,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
      - parameter isRoomChat:       是否是聊天室（房间）聊天
      - parameter sendMessageBlock: 发送成功后的回调（来确保消息已成功到达服务器）
      */
-    func sendMessage(messageType: XHBubbleMessageMediaType, messageURL: String?, messageText: String?, otherMessage: String?, receiveId: String, isRoomChat: Bool,sendMessageBlock: JDXMPP_SendMessageBlock) {
+    func sendMessage(messageType: XHBubbleMessageMediaType, messageURL: String?, messageText: String?, otherMessage: String?, receiveId: String, isRoomChat: Bool,sendMessageBlock: LGXMPP_SendMessageBlock) {
 
         _sendMessageBlock = nil
         _sendMessageBlock = sendMessageBlock
@@ -669,7 +669,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
            newMessage = XHMessage(voicePath: nil, voiceUrl: mediaText, voiceDuration: durantion, sender: sender, timestamp: nowTime)
            //当前收到的消息，通过腾讯云来下载语音（可以放到UI界面来实现）
            //历史记录复用此方法时，通过查询Url来得到可能已存在本地的voicepath
-           let resultPath = JDTXCloudManager.shared.getFilePathFromURLString(mediaText, typeString: &quot;file&quot;)
+           let resultPath = LGTXCloudManager.shared.getFilePathFromURLString(mediaText, typeString: &quot;file&quot;)
            if NSFileManager.defaultManager().fileExistsAtPath(resultPath){
                newMessage.voicePath = resultPath
            }
@@ -682,7 +682,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
            newMessage.bubbleMessageType = .Receiving       //接收消息
        }
        //未读已读推送等需定制化实现，这里简单将历史信息全部标记成已读
-       newMessage.isRead = !isHistory
+       newMessage.isRead = isHistory
        return newMessage
    }
 </code></pre><hr>

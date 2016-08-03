@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/index.html">
 <meta property="og:site_name" content="代码书生">
 <meta property="og:description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
-<meta property="og:updated_time" content="2016-08-02T06:12:00.000Z">
+<meta property="og:updated_time" content="2016-08-03T08:39:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（四、聊天记录、聊天室）">
 <meta name="twitter:description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
@@ -350,7 +350,7 @@ _xmppMessageArchinving.addDelegate(self, delegateQueue: dispatch_get_main_queue(
  - parameter userID:              如果为空，就是本地所有好友全部的聊天记录，这里friendid也可以为房间id,因为我们的房间信息发送走的也是正常聊天的_xmppMessageStorage存储
  - parameter getMessageListBlock: 回调
  */
-func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageListBlock) {
+func getMessageList(friendId: String?, getMessageListBlock: LGXMPP_GetMessageListBlock) {
 
     //如果是房间聊天，也可以从_xmppRoomStorage中获取数据库（xmppRoomStorage可以初始化为内存中的群消息对象，或者单独为群创建的coredata）
     let context = _xmppMessageStorage.mainThreadManagedObjectContext
@@ -363,12 +363,8 @@ func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageLis
     //request.fetchLimit = 50         //一次最多查询50
 
     if friendId != nil{
-        // 过滤内容，只找我与正要聊天的好友的聊天记录mina@localhost
+        // 过滤内容，只找我与正要聊天的好友的聊天记录,注意：数据库内为小写
         let friendJidString = self.getChatJidString(friendId!)
-
-        //            let jidstring = &quot;\(_userId!)@\(vHostChat)&quot;
-        //            let predicate = NSPredicate(format: &quot;(bareJidStr like %@) &amp;&amp; (streamBareJidStr like %@)&quot;,userId!.lowercaseString, _userId!.lowercaseString)
-
         let predicate = NSPredicate(format: &quot;bareJidStr = %@&quot;, friendJidString)
         request.predicate = predicate
     }
@@ -392,7 +388,7 @@ func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageLis
                 if oldMessage.messageMediaType == XHBubbleMessageMediaType.Voice &amp;&amp; oldMessage.voicePath == nil{
                     //语音没有从本地读到
                     //尝试在子线程去下载，下次拉记录时可以刷新出来，这次不再显示----也可以自己控制异步加载显示
-                    JDTXCloudManager.shared.downloadFile(oldMessage.voiceUrl, sign: kTXCloud_File_Secret_ManyTime, sucessResult: nil, faildMsg: nil)
+                    LGTXCloudManager.shared.downloadFile(oldMessage.voiceUrl, sign: kTXCloud_File_Secret_ManyTime, sucessResult: nil, faildMsg: nil)
                     continue
                 }
 
@@ -422,8 +418,8 @@ func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageLis
 var _xmppRoomJid: XMPPJID?                                  //房间jid
 var _xmppRoomOwnerMe = false                                //此房间是否是我创建的
 var _xmppRoomStorage = XMPPRoomMemoryStorage()              //聊天室信息存储，只是放到内存中，也可根据业务情况用coredata方式的对象存储,如XMPPRoomCoreDataStorage
-var _createChatRoomBlock: JDXMPP_CreateChatRoomBlock?       //创建房间回调
-var _getChatRoomModeratorsBlock: JDXMPP_GetChatRoomModeratorsBlock? //获取房间主持人列表
+var _createChatRoomBlock: LGXMPP_CreateChatRoomBlock?       //创建房间回调
+var _getChatRoomModeratorsBlock: LGXMPP_GetChatRoomModeratorsBlock? //获取房间主持人列表
 var _xmppRoomCreateSuccess = false                          //房间创建成功
 var _inChatRoom = false                                     //是否已经在聊天室内，因为本demo要确保同一时间只能在一个聊天室聊天
 
@@ -443,7 +439,7 @@ _xmppMuc.addDelegate(self, delegateQueue: dispatch_get_main_queue())
  - parameter ownerMe:             是否是自己创建的房间，他人邀请我加入房间时，我也要生成对应的房间对象
  - parameter createChatRoomBlock: 创建完房间的回调
  */
-func createChatRoom(roomID: String, ownerMe: Bool, createChatRoomBlock: JDXMPP_CreateChatRoomBlock) {
+func createChatRoom(roomID: String, ownerMe: Bool, createChatRoomBlock: LGXMPP_CreateChatRoomBlock) {
 
     let roomJid = XMPPJID.jidWithString(&quot;\(roomID)@\(vHostRoom)&quot;)
 
@@ -656,7 +652,7 @@ func xmppRoom(sender: XMPPRoom!, didReceiveMessage message: XMPPMessage!, fromOc
 
     //群聊时要将自己的信息排除，因为发出去的信息还会回传给自己
     let fromID = occupantJID.full().lastPathComponent
-    if !messageString.isEmpty &amp;&amp; fromID != _userId{
+    if !messageString.isEmpty &amp;&amp; fromID.lowercaseString != _userId?.lowercaseString{
 
         let newMessage = self.getXHMessageFromXMPPMessage(message, messageSender: message.from().full(), isUserSendMessage: false, isHistory: false)
         //同1对1接收消息一样，走同样的通知

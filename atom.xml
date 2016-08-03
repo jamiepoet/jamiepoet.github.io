@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-08-02T06:12:00.000Z</updated>
+  <updated>2016-08-03T08:39:13.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://jamiepoet.github.io/2016/08/02/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E5%9B%9B%E3%80%81%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95%E3%80%81%E8%81%8A%E5%A4%A9%E5%AE%A4%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/</id>
     <published>2016-08-02T06:01:25.000Z</published>
-    <updated>2016-08-02T06:12:00.000Z</updated>
+    <updated>2016-08-03T08:39:13.000Z</updated>
     
     <content type="html">&lt;p&gt;本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;一、聊天记录&quot;&gt;&lt;a href=&quot;#一、聊天记录&quot; class=&quot;headerlink&quot; title=&quot;一、聊天记录&quot;&gt;&lt;/a&gt;一、聊天记录&lt;/h2&gt;&lt;p&gt;XMPP默认通过coredata存储聊天记录，先初始化并进行激活&lt;/p&gt;
@@ -42,7 +42,7 @@ _xmppMessageArchinving.addDelegate(self, delegateQueue: dispatch_get_main_queue(
  - parameter userID:              如果为空，就是本地所有好友全部的聊天记录，这里friendid也可以为房间id,因为我们的房间信息发送走的也是正常聊天的_xmppMessageStorage存储
  - parameter getMessageListBlock: 回调
  */
-func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageListBlock) {
+func getMessageList(friendId: String?, getMessageListBlock: LGXMPP_GetMessageListBlock) {
 
     //如果是房间聊天，也可以从_xmppRoomStorage中获取数据库（xmppRoomStorage可以初始化为内存中的群消息对象，或者单独为群创建的coredata）
     let context = _xmppMessageStorage.mainThreadManagedObjectContext
@@ -55,12 +55,8 @@ func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageLis
     //request.fetchLimit = 50         //一次最多查询50
 
     if friendId != nil{
-        // 过滤内容，只找我与正要聊天的好友的聊天记录mina@localhost
+        // 过滤内容，只找我与正要聊天的好友的聊天记录,注意：数据库内为小写
         let friendJidString = self.getChatJidString(friendId!)
-
-        //            let jidstring = &amp;quot;\(_userId!)@\(vHostChat)&amp;quot;
-        //            let predicate = NSPredicate(format: &amp;quot;(bareJidStr like %@) &amp;amp;&amp;amp; (streamBareJidStr like %@)&amp;quot;,userId!.lowercaseString, _userId!.lowercaseString)
-
         let predicate = NSPredicate(format: &amp;quot;bareJidStr = %@&amp;quot;, friendJidString)
         request.predicate = predicate
     }
@@ -84,7 +80,7 @@ func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageLis
                 if oldMessage.messageMediaType == XHBubbleMessageMediaType.Voice &amp;amp;&amp;amp; oldMessage.voicePath == nil{
                     //语音没有从本地读到
                     //尝试在子线程去下载，下次拉记录时可以刷新出来，这次不再显示----也可以自己控制异步加载显示
-                    JDTXCloudManager.shared.downloadFile(oldMessage.voiceUrl, sign: kTXCloud_File_Secret_ManyTime, sucessResult: nil, faildMsg: nil)
+                    LGTXCloudManager.shared.downloadFile(oldMessage.voiceUrl, sign: kTXCloud_File_Secret_ManyTime, sucessResult: nil, faildMsg: nil)
                     continue
                 }
 
@@ -114,8 +110,8 @@ func getMessageList(friendId: String?, getMessageListBlock: JDXMPP_GetMessageLis
 var _xmppRoomJid: XMPPJID?                                  //房间jid
 var _xmppRoomOwnerMe = false                                //此房间是否是我创建的
 var _xmppRoomStorage = XMPPRoomMemoryStorage()              //聊天室信息存储，只是放到内存中，也可根据业务情况用coredata方式的对象存储,如XMPPRoomCoreDataStorage
-var _createChatRoomBlock: JDXMPP_CreateChatRoomBlock?       //创建房间回调
-var _getChatRoomModeratorsBlock: JDXMPP_GetChatRoomModeratorsBlock? //获取房间主持人列表
+var _createChatRoomBlock: LGXMPP_CreateChatRoomBlock?       //创建房间回调
+var _getChatRoomModeratorsBlock: LGXMPP_GetChatRoomModeratorsBlock? //获取房间主持人列表
 var _xmppRoomCreateSuccess = false                          //房间创建成功
 var _inChatRoom = false                                     //是否已经在聊天室内，因为本demo要确保同一时间只能在一个聊天室聊天
 
@@ -135,7 +131,7 @@ _xmppMuc.addDelegate(self, delegateQueue: dispatch_get_main_queue())
  - parameter ownerMe:             是否是自己创建的房间，他人邀请我加入房间时，我也要生成对应的房间对象
  - parameter createChatRoomBlock: 创建完房间的回调
  */
-func createChatRoom(roomID: String, ownerMe: Bool, createChatRoomBlock: JDXMPP_CreateChatRoomBlock) {
+func createChatRoom(roomID: String, ownerMe: Bool, createChatRoomBlock: LGXMPP_CreateChatRoomBlock) {
 
     let roomJid = XMPPJID.jidWithString(&amp;quot;\(roomID)@\(vHostRoom)&amp;quot;)
 
@@ -348,7 +344,7 @@ func xmppRoom(sender: XMPPRoom!, didReceiveMessage message: XMPPMessage!, fromOc
 
     //群聊时要将自己的信息排除，因为发出去的信息还会回传给自己
     let fromID = occupantJID.full().lastPathComponent
-    if !messageString.isEmpty &amp;amp;&amp;amp; fromID != _userId{
+    if !messageString.isEmpty &amp;amp;&amp;amp; fromID.lowercaseString != _userId?.lowercaseString{
 
         let newMessage = self.getXHMessageFromXMPPMessage(message, messageSender: message.from().full(), isUserSendMessage: false, isHistory: false)
         //同1对1接收消息一样，走同样的通知
@@ -388,7 +384,7 @@ func xmppRoom(sender: XMPPRoom!, didReceiveMessage message: XMPPMessage!, fromOc
     <link href="http://jamiepoet.github.io/2016/07/29/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%B8%89%E3%80%81%E5%A2%9E%E5%88%A0%E5%A5%BD%E5%8F%8B%E3%80%81%E5%A5%BD%E5%8F%8B%E5%88%97%E8%A1%A8%E3%80%81%E5%8F%91%E9%80%81%E5%90%84%E7%A7%8D%E6%B6%88%E6%81%AF%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/07/29/基于XMPP实现即时通讯（三、增删好友、好友列表、发送各种消息）/</id>
     <published>2016-07-29T08:57:59.000Z</published>
-    <updated>2016-08-02T05:59:38.000Z</updated>
+    <updated>2016-08-03T07:31:13.000Z</updated>
     
     <content type="html">&lt;p&gt;在实现整套流程时，引入了UI框架MessageDisplayKit和XHPopMenu，可以通过pod直接集成到工程中：&lt;code&gt;pod &amp;quot;MessageDisplayKit&amp;quot;, pod &amp;quot;XHPopMenu&amp;quot;&lt;/code&gt;&lt;br&gt;同时引入了腾讯云来存储多媒体消息，具体为腾讯云的对象存储服务： &lt;a href=&quot;https://www.qcloud.com/product/cos.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.qcloud.com/product/cos.html&lt;/a&gt; 。整个完整的Demo会在最后一节放到个人github上。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;一、增删好友&quot;&gt;&lt;a href=&quot;#一、增删好友&quot; class=&quot;headerlink&quot; title=&quot;一、增删好友&quot;&gt;&lt;/a&gt;一、增删好友&lt;/h2&gt;&lt;p&gt;首先了解一下XMPP的通信有三种方式：message、presence和iq，主要内容和区别可以看下：&lt;a href=&quot;http://my.oschina.net/greki/blog/272867，简单了解下。&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://my.oschina.net/greki/blog/272867，简单了解下。&lt;/a&gt;&lt;br&gt;然后需要知道好友相关请求使用的是presence, 它有以下几种type：&lt;/p&gt;
@@ -422,7 +418,7 @@ var _xmppRosterStorage = XMPPRosterCoreDataStorage.sharedInstance()     //花名
  - parameter userId:         好友id
  - parameter addFriendBlock: 添加好友请求的结果回调（并非好友回复的结果，只是请求是否发送成功的回调）
  */
-func addFriend(friendId: String, addFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+func addFriend(friendId: String, addFriendBlock: LGXMPP_AddOrDeleteFriendRequestBlock?) {
 
     let friendJidString = self.getChatJidString(friendId)
     //先判断是不是添加了自己
@@ -447,7 +443,7 @@ func addFriend(friendId: String, addFriendBlock: JDXMPP_AddOrDeleteFriendRequest
     _addFriendBlock = addFriendBlock
     _xmppRoster.subscribePresenceToUser(userJID)
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;2-删除好友&quot;&gt;&lt;a href=&quot;#2-删除好友&quot; class=&quot;headerlink&quot; title=&quot;2. 删除好友&quot;&gt;&lt;/a&gt;2. 删除好友&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;func deleteFriend(friendJid: XMPPJID, deleteFriendBlock: JDXMPP_AddOrDeleteFriendRequestBlock?) {
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;2-删除好友&quot;&gt;&lt;a href=&quot;#2-删除好友&quot; class=&quot;headerlink&quot; title=&quot;2. 删除好友&quot;&gt;&lt;/a&gt;2. 删除好友&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;func deleteFriend(friendJid: XMPPJID, deleteFriendBlock: LGXMPP_AddOrDeleteFriendRequestBlock?) {
     _deleteFriendBlock = deleteFriendBlock
     _xmppRoster.removeUser(friendJid)
 }
@@ -625,7 +621,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
      - parameter isRoomChat:       是否是聊天室（房间）聊天
      - parameter sendMessageBlock: 发送成功后的回调（来确保消息已成功到达服务器）
      */
-    func sendMessage(messageType: XHBubbleMessageMediaType, messageURL: String?, messageText: String?, otherMessage: String?, receiveId: String, isRoomChat: Bool,sendMessageBlock: JDXMPP_SendMessageBlock) {
+    func sendMessage(messageType: XHBubbleMessageMediaType, messageURL: String?, messageText: String?, otherMessage: String?, receiveId: String, isRoomChat: Bool,sendMessageBlock: LGXMPP_SendMessageBlock) {
 
         _sendMessageBlock = nil
         _sendMessageBlock = sendMessageBlock
@@ -729,7 +725,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
            newMessage = XHMessage(voicePath: nil, voiceUrl: mediaText, voiceDuration: durantion, sender: sender, timestamp: nowTime)
            //当前收到的消息，通过腾讯云来下载语音（可以放到UI界面来实现）
            //历史记录复用此方法时，通过查询Url来得到可能已存在本地的voicepath
-           let resultPath = JDTXCloudManager.shared.getFilePathFromURLString(mediaText, typeString: &amp;quot;file&amp;quot;)
+           let resultPath = LGTXCloudManager.shared.getFilePathFromURLString(mediaText, typeString: &amp;quot;file&amp;quot;)
            if NSFileManager.defaultManager().fileExistsAtPath(resultPath){
                newMessage.voicePath = resultPath
            }
@@ -742,7 +738,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
            newMessage.bubbleMessageType = .Receiving       //接收消息
        }
        //未读已读推送等需定制化实现，这里简单将历史信息全部标记成已读
-       newMessage.isRead = !isHistory
+       newMessage.isRead = isHistory
        return newMessage
    }
 &lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
@@ -905,13 +901,13 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
+      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
+    
       <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
-    
-      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
     
   </entry>
   
