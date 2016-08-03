@@ -86,16 +86,16 @@
 
 
 
-<meta name="description" content="一、IM协议及服务器选型参考http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/协议选型：XMPP已经成为标准的IM协议。XMPP官网：http://XMPP.org/服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。">
+<meta name="description" content="关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习, 最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于XMPP实现即时通讯（一、环境搭建）">
 <meta property="og:url" content="http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/index.html">
 <meta property="og:site_name" content="代码书生">
-<meta property="og:description" content="一、IM协议及服务器选型参考http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/协议选型：XMPP已经成为标准的IM协议。XMPP官网：http://XMPP.org/服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。">
-<meta property="og:updated_time" content="2016-06-17T02:52:55.000Z">
+<meta property="og:description" content="关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习, 最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
+<meta property="og:updated_time" content="2016-08-03T09:05:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（一、环境搭建）">
-<meta name="twitter:description" content="一、IM协议及服务器选型参考http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/协议选型：XMPP已经成为标准的IM协议。XMPP官网：http://XMPP.org/服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。">
+<meta name="twitter:description" content="关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习, 最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
 
 
 
@@ -330,7 +330,9 @@
       
 
       
-        <h2 id="一、IM协议及服务器选型"><a href="#一、IM协议及服务器选型" class="headerlink" title="一、IM协议及服务器选型"></a>一、IM协议及服务器选型</h2><p>参考<br><a href="http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/" target="_blank" rel="external">http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/</a><br>协议选型：XMPP已经成为标准的IM协议。XMPP官网：<a href="http://XMPP.org/" target="_blank" rel="external">http://XMPP.org/</a><br>服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。<a id="more"></a>从编程语言角度来看主要是JAVA和Erlang。JAVA语言的优势是类库完备，容易招人。Erlang的优势是hot code swap，live console， 高并发。而且ejabberd是对XMPP协议支持最好、实现最为全面的server。因此企业在不考虑独立开发服务器的情况下，初期选型基本建议采用ejabberd。</p>
+        <p>关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习, 最后章节会将整个完整Demo放到我的github。<br>因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。</p>
+<a id="more"></a>
+<h2 id="一、IM协议及服务器选型"><a href="#一、IM协议及服务器选型" class="headerlink" title="一、IM协议及服务器选型"></a>一、IM协议及服务器选型</h2><p>参考<br><a href="http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/" target="_blank" rel="external">http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/</a><br>协议选型：XMPP已经成为标准的IM协议。XMPP官网：<a href="http://XMPP.org/" target="_blank" rel="external">http://XMPP.org/</a><br>服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。从编程语言角度来看主要是JAVA和Erlang。JAVA语言的优势是类库完备，容易招人。Erlang的优势是hot code swap，live console， 高并发。而且ejabberd是对XMPP协议支持最好、实现最为全面的server。因此企业在不考虑独立开发服务器的情况下，初期选型基本建议采用ejabberd。</p>
 <p>本文我们主要实践iOS端流程，不考虑太多服务器实现，因为Openfire易安装，插件功能丰富，我们使用Openfire</p>
 <h2 id="二、MAC上搭建MySQL"><a href="#二、MAC上搭建MySQL" class="headerlink" title="二、MAC上搭建MySQL"></a>二、MAC上搭建MySQL</h2><p>因为服务器需要数据库支撑，所以我们在搭建Openfire前要先搭建数据库。参照: <a href="http://www.cnblogs.com/xiaodao/archive/2013/04/04/2999426.html" target="_blank" rel="external">http://www.cnblogs.com/xiaodao/archive/2013/04/04/2999426.html</a> ,总结如下：</p>
 <ol>
@@ -502,7 +504,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-count">9</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jamiepoet.github.io/"/>
-  <updated>2016-08-03T08:39:13.000Z</updated>
+  <updated>2016-08-03T09:36:11.000Z</updated>
   <id>http://jamiepoet.github.io/</id>
   
   <author>
@@ -14,6 +14,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于XMPP实现即时通讯（五、Demo）</title>
+    <link href="http://jamiepoet.github.io/2016/08/02/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%BA%94%E3%80%81Demo%EF%BC%89/"/>
+    <id>http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（五、Demo）/</id>
+    <published>2016-08-02T09:30:56.000Z</published>
+    <updated>2016-08-03T09:36:11.000Z</updated>
+    
+    <content type="html">&lt;p&gt;Demo地址： &lt;a href=&quot;https://github.com/Jamie-Ling-iOS/LG-XMPPDemo&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/Jamie-Ling-iOS/LG-XMPPDemo&lt;/a&gt;&lt;br&gt;欢迎大家关注回复或加我QQ:2726786161，一起学习，探讨。&lt;/p&gt;
+&lt;p&gt;作者 [@代码书生][1]&lt;br&gt;2016 年 08月 02日    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Demo地址： &lt;a href=&quot;https://github.com/Jamie-Ling-iOS/LG-XMPPDemo&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/Jamie-Ling-iOS/LG-XMPPD
+    
+    </summary>
+    
+      <category term="即时通讯（IM）" scheme="http://jamiepoet.github.io/categories/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88IM%EF%BC%89/"/>
+    
+    
+      <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
+    
+      <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="XMPP" scheme="http://jamiepoet.github.io/tags/XMPP/"/>
+    
+      <category term="IM" scheme="http://jamiepoet.github.io/tags/IM/"/>
+    
+  </entry>
   
   <entry>
     <title>基于XMPP实现即时通讯（四、聊天记录、聊天室）</title>
@@ -769,9 +799,9 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
     <link href="http://jamiepoet.github.io/2016/06/17/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%BA%8C%E3%80%81%E7%99%BB%E9%99%86%E3%80%81%E4%B8%8A%E4%B8%8B%E7%BA%BF%E3%80%81%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/06/17/基于XMPP实现即时通讯（二、登陆、上下线、接收消息）/</id>
     <published>2016-06-17T01:47:57.000Z</published>
-    <updated>2016-07-29T08:54:28.000Z</updated>
+    <updated>2016-08-03T09:06:00.000Z</updated>
     
-    <content type="html">&lt;p&gt;关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+    <content type="html">&lt;p&gt;关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;一、了解XMPP常用对象&quot;&gt;&lt;a href=&quot;#一、了解XMPP常用对象&quot; class=&quot;headerlink&quot; title=&quot;一、了解XMPP常用对象&quot;&gt;&lt;/a&gt;一、了解XMPP常用对象&lt;/h2&gt;&lt;p&gt;XMPPStream：xmpp基础服务类&lt;br&gt;XMPPRoster：好友列表类&lt;br&gt;XMPPRosterCoreDataStorage：好友列表（用户账号）在core data中的操作类&lt;br&gt;XMPPvCardCoreDataStorage：好友名片（昵称，签名，性别，年龄等信息）在core data中的操作类&lt;br&gt;XMPPvCardTemp：好友名片实体类，从数据库里取出来的都是它&lt;br&gt;xmppvCardAvatarModule：好友头像&lt;br&gt;XMPPReconnect：如果失去链接,自动重连&lt;br&gt;XMPPRoom：提供多用户聊天支持&lt;br&gt;XMPPPubSub：发布订阅&lt;/p&gt;
 &lt;h2 id=&quot;二、引入头文件&quot;&gt;&lt;a href=&quot;#二、引入头文件&quot; class=&quot;headerlink&quot; title=&quot;二、引入头文件&quot;&gt;&lt;/a&gt;二、引入头文件&lt;/h2&gt;&lt;p&gt;根据&lt;a href=&quot;http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/#四、工程中集成XMPP&quot;&gt;基于XMPP实现即时通讯（一、环境搭建）&lt;/a&gt;的集成方式，cocapods引入的XMPP为OC版本，所以要在工程的桥接文件中引入基础服务类：&lt;code&gt;#import “XMPP.h&amp;quot;&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id=&quot;三、登陆&quot;&gt;&lt;a href=&quot;#三、登陆&quot; class=&quot;headerlink&quot; title=&quot;三、登陆&quot;&gt;&lt;/a&gt;三、登陆&lt;/h2&gt;&lt;p&gt;登陆之前我们得先在openfire上建个用户（也可以直接用管理员帐号），然后再进行以下步骤：初始化核心类、建立socket链接、链接成功后通过密码进行身份校验、更新上线状态。&lt;/p&gt;
@@ -796,7 +826,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
     
     <summary type="html">
     
-      &lt;p&gt;关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;br&gt;
+      &lt;p&gt;关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;br&gt;
     
     </summary>
     
@@ -818,9 +848,11 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
     <link href="http://jamiepoet.github.io/2016/06/16/%E5%9F%BA%E4%BA%8EXMPP%E5%AE%9E%E7%8E%B0%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%EF%BC%88%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%EF%BC%89/"/>
     <id>http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/</id>
     <published>2016-06-16T06:49:56.000Z</published>
-    <updated>2016-06-17T02:52:55.000Z</updated>
+    <updated>2016-08-03T09:05:01.000Z</updated>
     
-    <content type="html">&lt;h2 id=&quot;一、IM协议及服务器选型&quot;&gt;&lt;a href=&quot;#一、IM协议及服务器选型&quot; class=&quot;headerlink&quot; title=&quot;一、IM协议及服务器选型&quot;&gt;&lt;/a&gt;一、IM协议及服务器选型&lt;/h2&gt;&lt;p&gt;参考&lt;br&gt;&lt;a href=&quot;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&lt;/a&gt;&lt;br&gt;协议选型：XMPP已经成为标准的IM协议。XMPP官网：&lt;a href=&quot;http://XMPP.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://XMPP.org/&lt;/a&gt;&lt;br&gt;服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;从编程语言角度来看主要是JAVA和Erlang。JAVA语言的优势是类库完备，容易招人。Erlang的优势是hot code swap，live console， 高并发。而且ejabberd是对XMPP协议支持最好、实现最为全面的server。因此企业在不考虑独立开发服务器的情况下，初期选型基本建议采用ejabberd。&lt;/p&gt;
+    <content type="html">&lt;p&gt;关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习, 最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;一、IM协议及服务器选型&quot;&gt;&lt;a href=&quot;#一、IM协议及服务器选型&quot; class=&quot;headerlink&quot; title=&quot;一、IM协议及服务器选型&quot;&gt;&lt;/a&gt;一、IM协议及服务器选型&lt;/h2&gt;&lt;p&gt;参考&lt;br&gt;&lt;a href=&quot;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&lt;/a&gt;&lt;br&gt;协议选型：XMPP已经成为标准的IM协议。XMPP官网：&lt;a href=&quot;http://XMPP.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://XMPP.org/&lt;/a&gt;&lt;br&gt;服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。从编程语言角度来看主要是JAVA和Erlang。JAVA语言的优势是类库完备，容易招人。Erlang的优势是hot code swap，live console， 高并发。而且ejabberd是对XMPP协议支持最好、实现最为全面的server。因此企业在不考虑独立开发服务器的情况下，初期选型基本建议采用ejabberd。&lt;/p&gt;
 &lt;p&gt;本文我们主要实践iOS端流程，不考虑太多服务器实现，因为Openfire易安装，插件功能丰富，我们使用Openfire&lt;/p&gt;
 &lt;h2 id=&quot;二、MAC上搭建MySQL&quot;&gt;&lt;a href=&quot;#二、MAC上搭建MySQL&quot; class=&quot;headerlink&quot; title=&quot;二、MAC上搭建MySQL&quot;&gt;&lt;/a&gt;二、MAC上搭建MySQL&lt;/h2&gt;&lt;p&gt;因为服务器需要数据库支撑，所以我们在搭建Openfire前要先搭建数据库。参照: &lt;a href=&quot;http://www.cnblogs.com/xiaodao/archive/2013/04/04/2999426.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.cnblogs.com/xiaodao/archive/2013/04/04/2999426.html&lt;/a&gt; ,总结如下：&lt;/p&gt;
 &lt;ol&gt;
@@ -843,7 +875,7 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
     
     <summary type="html">
     
-      &lt;h2 id=&quot;一、IM协议及服务器选型&quot;&gt;&lt;a href=&quot;#一、IM协议及服务器选型&quot; class=&quot;headerlink&quot; title=&quot;一、IM协议及服务器选型&quot;&gt;&lt;/a&gt;一、IM协议及服务器选型&lt;/h2&gt;&lt;p&gt;参考&lt;br&gt;&lt;a href=&quot;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&quot;&gt;http://liudanking.me/arch/xmpp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%89%E5%9E%8B/&lt;/a&gt;&lt;br&gt;协议选型：XMPP已经成为标准的IM协议。XMPP官网：&lt;a href=&quot;http://XMPP.org/&quot;&gt;http://XMPP.org/&lt;/a&gt;&lt;br&gt;服务器型：使用广泛的是ejabberd，jabberd 2.x， Openfire，Tigase。
+      &lt;p&gt;关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习, 最后章节会将整个完整Demo放到我的github。&lt;br&gt;因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。&lt;/p&gt;
     
     </summary>
     
@@ -901,13 +933,13 @@ func xmppRosterDidEndPopulating(sender: XMPPRoster!) {
       <category term="视频直播/点播" scheme="http://jamiepoet.github.io/categories/%E8%A7%86%E9%A2%91%E7%9B%B4%E6%92%AD-%E7%82%B9%E6%92%AD/"/>
     
     
-      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
-    
       <category term="FFmpeg" scheme="http://jamiepoet.github.io/tags/FFmpeg/"/>
     
       <category term="iOS" scheme="http://jamiepoet.github.io/tags/iOS/"/>
     
       <category term="Mac" scheme="http://jamiepoet.github.io/tags/Mac/"/>
+    
+      <category term="x264" scheme="http://jamiepoet.github.io/tags/x264/"/>
     
   </entry>
   

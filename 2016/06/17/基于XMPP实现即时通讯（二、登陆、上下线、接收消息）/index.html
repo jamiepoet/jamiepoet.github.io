@@ -86,16 +86,16 @@
 
 
 
-<meta name="description" content="关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
+<meta name="description" content="关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于XMPP实现即时通讯（二、登陆、上下线、接收消息）">
 <meta property="og:url" content="http://jamiepoet.github.io/2016/06/17/基于XMPP实现即时通讯（二、登陆、上下线、接收消息）/index.html">
 <meta property="og:site_name" content="代码书生">
-<meta property="og:description" content="关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
-<meta property="og:updated_time" content="2016-07-29T08:54:28.000Z">
+<meta property="og:description" content="关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
+<meta property="og:updated_time" content="2016-08-03T09:06:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（二、登陆、上下线、接收消息）">
-<meta name="twitter:description" content="关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
+<meta name="twitter:description" content="关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。">
 
 
 
@@ -330,7 +330,7 @@
       
 
       
-        <p>关于XMPP 本地环境搭建、登录、上下线等状态、发送接收多媒体消息、增加删除好友、群聊这些功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。<br>因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。<br><a id="more"></a></p>
+        <p>关于XMPP 本地环境搭建、登录、好友列表，好友状态、发送接收多媒体消息、增删好友、群聊等功能点，大家可以跟我一起来学习，最后章节会将整个完整Demo放到我的github。<br>因为很早就开始用swift来做项目，所以本文以swift进行示例。Xcode版本为7.3.1。<br><a id="more"></a></p>
 <h2 id="一、了解XMPP常用对象"><a href="#一、了解XMPP常用对象" class="headerlink" title="一、了解XMPP常用对象"></a>一、了解XMPP常用对象</h2><p>XMPPStream：xmpp基础服务类<br>XMPPRoster：好友列表类<br>XMPPRosterCoreDataStorage：好友列表（用户账号）在core data中的操作类<br>XMPPvCardCoreDataStorage：好友名片（昵称，签名，性别，年龄等信息）在core data中的操作类<br>XMPPvCardTemp：好友名片实体类，从数据库里取出来的都是它<br>xmppvCardAvatarModule：好友头像<br>XMPPReconnect：如果失去链接,自动重连<br>XMPPRoom：提供多用户聊天支持<br>XMPPPubSub：发布订阅</p>
 <h2 id="二、引入头文件"><a href="#二、引入头文件" class="headerlink" title="二、引入头文件"></a>二、引入头文件</h2><p>根据<a href="http://jamiepoet.github.io/2016/06/16/基于XMPP实现即时通讯（一、环境搭建）/#四、工程中集成XMPP">基于XMPP实现即时通讯（一、环境搭建）</a>的集成方式，cocapods引入的XMPP为OC版本，所以要在工程的桥接文件中引入基础服务类：<code>#import “XMPP.h&quot;</code></p>
 <h2 id="三、登陆"><a href="#三、登陆" class="headerlink" title="三、登陆"></a>三、登陆</h2><p>登陆之前我们得先在openfire上建个用户（也可以直接用管理员帐号），然后再进行以下步骤：初始化核心类、建立socket链接、链接成功后通过密码进行身份校验、更新上线状态。</p>
@@ -504,7 +504,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-count">9</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
