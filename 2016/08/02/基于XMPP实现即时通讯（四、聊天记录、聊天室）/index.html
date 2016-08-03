@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://jamiepoet.github.io/2016/08/02/基于XMPP实现即时通讯（四、聊天记录、聊天室）/index.html">
 <meta property="og:site_name" content="代码书生">
 <meta property="og:description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
-<meta property="og:updated_time" content="2016-08-02T06:08:42.000Z">
+<meta property="og:updated_time" content="2016-08-02T06:12:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于XMPP实现即时通讯（四、聊天记录、聊天室）">
 <meta name="twitter:description" content="本章来学习XMPP最后两个大的应用知识点：聊天记录和聊天室。">
@@ -597,7 +597,8 @@ func getRoomAllOccupantsList() -&gt; [String]? {
 
                         if isSuccess{
                            //以通知的方式将房间完整jid传给对应的界面去跳转或刷新UI
-                          //需要群人员清单时通过上面的getRoomAllOccupantsList()方法获取 NSNotificationCenter.defaultCenter().postNotificationName(&quot;joinChatRoom&quot;, object: weakSelf!._xmppRoomJid!.bareJID().full(), userInfo: nil)
+                          //需要群人员清单时通过上面的getRoomAllOccupantsList()方法获取
+                           NSNotificationCenter.defaultCenter().postNotificationName(&quot;joinChatRoom&quot;, object: weakSelf!._xmppRoomJid!.bareJID().full(), userInfo: nil)
                         }
                     })
                 })
